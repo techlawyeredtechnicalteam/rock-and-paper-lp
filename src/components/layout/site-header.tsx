@@ -10,7 +10,7 @@ const navItems = [
   { href: "/about", label: "About" },
   { href: "/expertise", label: "Expertise" },
   { href: "/people", label: "People" },
-  { href: "/sectors", label: "Sectors" },
+  { href: "/articles", label: "Articles" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -53,7 +53,7 @@ export function SiteHeader() {
             priority
           />
           <span className="font-serif text-xl font-semibold tracking-[0.12em] text-ink sm:text-2xl">
-            ROCK & PAPER <span className="text-sm tracking-[0.1em]">LP</span>
+            ROCK & PAPER LP
           </span>
         </Link>
 

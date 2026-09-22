@@ -48,6 +48,7 @@ export function SiteFooter() {
             </a>
             <div className="mt-8 flex gap-5 text-xs font-bold uppercase tracking-[0.16em] lg:justify-end">
               <a href={contact.x} target="_blank" rel="noreferrer" className="text-stone/60 hover:text-white">X</a>
+              <Link href="/articles" className="text-stone/60 hover:text-white">Articles</Link>
               <Link href="/contact" className="text-stone/60 hover:text-white">Contact</Link>
             </div>
           </div>

@@ -12,7 +12,15 @@ export function PeopleGrid() {
           {people.map((person) => (
             <Link key={person.slug} href={`/people/${person.slug}`} className="group">
               <div className="relative aspect-[4/5] overflow-hidden bg-navy">
-                <Image src={person.image} alt={person.name} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover object-top transition duration-500 group-hover:scale-[1.025]" />
+                <Image
+                  src={person.image}
+                  alt={person.name}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  quality={95}
+                  style={{ objectPosition: person.imagePosition }}
+                  className="object-cover transition duration-500 group-hover:scale-[1.025]"
+                />
               </div>
               <div className="flex justify-between border-b border-ink/15 py-5">
                 <div>

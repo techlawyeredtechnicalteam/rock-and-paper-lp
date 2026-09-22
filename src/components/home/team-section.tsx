@@ -24,7 +24,9 @@ export function TeamSection() {
                   alt={person.name}
                   fill
                   sizes="(max-width: 768px) 100vw, 33vw"
-                  className="object-cover object-top grayscale-[18%] transition duration-500 group-hover:scale-[1.025] group-hover:grayscale-0"
+                  quality={95}
+                  style={{ objectPosition: person.imagePosition }}
+                  className="object-cover grayscale-[18%] transition duration-500 group-hover:scale-[1.025] group-hover:grayscale-0"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-ink/45 via-transparent to-transparent" />
               </div>

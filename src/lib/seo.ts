@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const siteConfig = {
   name: "Rock & Paper LP",
   shortName: "Rock & Paper LP",
-  url: "https://rockandpaper.com",
+  url: "https://rockandpaperlp.com",
   locale: "en_NG",
   description:
     "A Nigerian full-service law firm advising businesses, investors, institutions and individuals across transactions, disputes and regulation.",

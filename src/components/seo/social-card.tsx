@@ -91,7 +91,7 @@ export function SocialCard() {
         }}
       >
         <span>Abuja · Lagos · Nigeria</span>
-        <span style={{ color: "#667085" }}>rockandpaper.com</span>
+        <span style={{ color: "#667085" }}>rockandpaperlp.com</span>
       </div>
 
       <div

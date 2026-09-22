@@ -12,7 +12,7 @@ export function StructuredData() {
     image: `${siteConfig.url}${siteConfig.ogImage}`,
     description: siteConfig.description,
     email: contact.generalEmail,
-    telephone: contact.phones[1],
+    telephone: contact.phones[0],
     openingHours: "Mo-Fr 08:00-18:00",
     areaServed: {
       "@type": "Country",
