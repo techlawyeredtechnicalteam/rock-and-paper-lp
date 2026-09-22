@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { ArrowLink } from "@/components/ui/arrow-link";
 import { Container } from "@/components/ui/container";
 
 export function ArticlesSection() {
@@ -22,9 +21,6 @@ export function ArticlesSection() {
             <p className="mt-7 max-w-xl text-base leading-8 text-muted">
               No article yet, check back later.
             </p>
-            <div className="mt-10">
-              <ArrowLink href="/articles">Explore articles</ArrowLink>
-            </div>
           </div>
         </div>
       </Container>
