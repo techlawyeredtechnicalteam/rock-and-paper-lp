@@ -56,7 +56,7 @@ export function SiteFooter() {
 
         <div className="mt-16 flex flex-col gap-4 border-t border-white/10 pt-8 text-[0.68rem] uppercase tracking-[0.14em] text-stone/45 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} Rock & Paper LP</p>
-          <p>Abuja · Lagos · Nigeria</p>
+          <p>Abuja · Lagos</p>
         </div>
       </Container>
     </footer>

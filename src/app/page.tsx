@@ -4,7 +4,6 @@ import { PracticeAreasSection } from "@/components/home/practice-areas-section";
 import { SelectedExperienceSection } from "@/components/home/selected-experience-section";
 import { TeamSection } from "@/components/home/team-section";
 import { EthosSection } from "@/components/home/ethos-section";
-import { ArticlesSection } from "@/components/home/articles-section";
 import { OfficesSection } from "@/components/home/offices-section";
 import { ContactCtaSection } from "@/components/home/contact-cta-section";
 
@@ -17,7 +16,6 @@ export default function HomePage() {
       <SelectedExperienceSection />
       <TeamSection />
       <EthosSection />
-      <ArticlesSection />
       <OfficesSection />
       <ContactCtaSection />
     </>

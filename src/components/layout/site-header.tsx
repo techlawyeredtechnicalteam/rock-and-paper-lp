@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Container } from "@/components/ui/container";
+import { contact } from "@/content/firm";
 
 const navItems = [
   { href: "/about", label: "About" },
@@ -13,6 +14,14 @@ const navItems = [
   { href: "/articles", label: "Articles" },
   { href: "/contact", label: "Contact" },
 ];
+
+function XSocialIcon({ className = "size-4" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className={className} fill="currentColor">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.657l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.45-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z" />
+    </svg>
+  );
+}
 
 export function SiteHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -67,6 +76,16 @@ export function SiteHeader() {
               {item.label}
             </Link>
           ))}
+          <a
+            href={contact.x}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Follow Rock & Paper LP on X"
+            title="Follow us on X"
+            className="flex size-9 items-center justify-center border border-ink/20 text-ink transition-colors hover:border-ink hover:bg-ink hover:text-paper"
+          >
+            <XSocialIcon />
+          </a>
         </nav>
 
         <div ref={mobileMenuRef} className="relative lg:hidden">
@@ -97,6 +116,16 @@ export function SiteHeader() {
                     {item.label}
                   </Link>
                 ))}
+                <a
+                  href={contact.x}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="mt-5 flex items-center justify-between bg-ink px-4 py-3 text-xs font-bold uppercase tracking-[0.16em] text-paper"
+                >
+                  <span>Follow us on X</span>
+                  <XSocialIcon />
+                </a>
               </nav>
             </div>
           ) : null}
