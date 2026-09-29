@@ -1,0 +1,123 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  STAFF
+}
+
+model User {
+  id             String  @id @default(cuid())
+  email          String  @unique
+  fullName       String
+  password       String
+  role           Role    @default(STAFF) // 2. Add the role field
+  profilePicture String?
+  createdBlogs   Blog[]
+}
+
+model Blog {
+  id          String   @id @default(cuid())
+  title       String
+  body        String   @db.Text
+  
+  // 1. The actual author of the post (flexible for internal or external)
+  authorName  String
+  authorTitle String?  // e.g., "Partner", "Guest Contributor"
+  authorImage String?  // Optional avatar for the actual writer
+  
+  // 2. The admin/staff who uploaded the post to the system
+  creatorId   String
+  creator     User     @relation(fields: [creatorId], references: [id])
+  
+  published   Boolean  @default(false)
+  image       String   // Main blog cover image
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model FirmDetail {
+  id           String   @id @default(cuid())
+  generalEmail String
+  partnerEmail String
+  phones       String[]
+  hours        String
+  xUrl         String 
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Office {
+  id        String   @id @default(cuid())
+  city      String
+  address   String[] // Stores ["Plot 319...", "Katampe..."] natively
+  image     String
+  imageAlt  String
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SiteConfig {
+  id                String   @id @default(cuid())
+  
+  name              String   @default("Rock & Paper LP")
+  shortName         String   @default("Rock & Paper LP")
+  url               String   @default("https://rockandpaperlp.com")
+  locale            String   @default("en_NG")
+  description       String   @db.Text
+  socialDescription String   @db.Text
+  ogImage           String   @default("/opengraph-image")
+  twitterImage      String   @default("/twitter-image")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model Experience {
+  id          String   @id @default(cuid())
+  value       String   
+  title       String
+  description String   @db.Text
+  image       String
+  imageAlt    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Practice {
+  id               String   @id @default(cuid())
+  
+  slug             String   @unique
+  title            String
+  shortDescription String   @db.Text
+  description      String   @db.Text
+  services         String[] // Stores the array of services natively in PostgreSQL
+  image            String
+  imageAlt         String
+  
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model Person {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  name          String
+  expertise     String[] // Stores ["Energy", "Corporate Advisory", ...]
+  image         String
+  imagePosition String?  // Optional field, mapped from imagePosition?
+  bio           String[] // Stores each paragraph as a separate string in the array
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
