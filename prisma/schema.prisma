@@ -71,7 +71,6 @@ model Office {
 
 model SiteConfig {
   id                String   @id @default(cuid())
-  
   name              String   @default("Rock & Paper LP")
   shortName         String   @default("Rock & Paper LP")
   url               String   @default("https://rockandpaperlp.com")
@@ -80,8 +79,42 @@ model SiteConfig {
   socialDescription String   @db.Text
   ogImage           String   @default("/opengraph-image")
   twitterImage      String   @default("/twitter-image")
+  keywords          String[] @default([]) // Added keyword array
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
+}
+
+model PageSection {
+  id          String   @id @default(cuid())
+  
+  // Identifier fields
+  pageSlug    String   // e.g., "home", "about", "contact"
+  sectionKey  String   // e.g., "hero", "firm-intro", "ethos"
+  
+  // Content fields (all optional since components use different combinations)
+  eyebrow     String?
+  title       String?  @db.Text
+  description String?  @db.Text
+  image       String?  
+  linkUrl     String?
+  linkLabel   String?
+
+  updatedAt   DateTime @updatedAt
+
+  // Ensures you can't accidentally create two "hero" sections for the "home" page
+  @@unique([pageSlug, sectionKey]) 
+}
+
+model PageSeo {
+  id          String   @id @default(cuid())
+  
+  pageSlug    String   @unique // e.g., "home", "about", "contact"
+  
+  title       String?  // e.g., "About Us | Rock & Paper LP"
+  description String?  @db.Text
+  ogImage     String?  // Optional: In case they want a specific preview image just for this page
+  
+  updatedAt   DateTime @updatedAt
 }
 
 model Experience {

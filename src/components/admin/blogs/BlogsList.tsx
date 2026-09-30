@@ -21,6 +21,7 @@ export function BlogsList() {
 		data: blogs,
 		isLoading,
 		isError,
+		refetch,
 	} = useQuery<Blog[]>({
 		queryKey: ["blogs"],
 		queryFn: async () => {
@@ -38,6 +39,7 @@ export function BlogsList() {
 			const res = await fetch(`/api/blogs/${id}`, { method: "DELETE" });
 			if (res.ok) {
 				queryClient.invalidateQueries({ queryKey: ["blogs"] });
+				refetch();
 			} else {
 				alert("Failed to delete blog.");
 			}

@@ -15,6 +15,8 @@ const siteConfigSchema = yup.object({
 		.required("Social sharing description is required"),
 	ogImage: yup.string().required("Open Graph image URL is required"),
 	twitterImage: yup.string().required("Twitter image URL is required"),
+	// Added keywords validation (optional, defaults to empty array)
+	keywords: yup.array().of(yup.string().required()).optional().default([]),
 });
 
 const yupErrorToDetails = (err: yup.ValidationError) => {
@@ -85,6 +87,7 @@ export async function PUT(req: NextRequest) {
 					socialDescription: data.socialDescription,
 					ogImage: data.ogImage,
 					twitterImage: data.twitterImage,
+					keywords: data.keywords, // Included keywords
 				},
 			});
 		} else {
@@ -99,6 +102,7 @@ export async function PUT(req: NextRequest) {
 					socialDescription: data.socialDescription,
 					ogImage: data.ogImage,
 					twitterImage: data.twitterImage,
+					keywords: data.keywords, // Included keywords
 				},
 			});
 		}

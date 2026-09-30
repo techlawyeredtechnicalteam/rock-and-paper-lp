@@ -1,99 +1,172 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-ink: #07152f;
-  --color-navy: #1d2d4e;
-  --color-paper: #faf9f6;
-  --color-stone: #e9e6e3;
-  --color-taupe: #84796f;
-  --color-charcoal: #252a33;
-  --color-muted: #667085;
-  --font-serif: var(--font-garamond);
-  --font-sans: var(--font-manrope);
+	--color-ink: #07152f;
+	--color-navy: #1d2d4e;
+	--color-paper: #faf9f6;
+	--color-stone: #e9e6e3;
+	--color-taupe: #84796f;
+	--color-charcoal: #252a33;
+	--color-muted: #667085;
+	--font-serif: var(--font-garamond);
+	--font-sans: var(--font-manrope);
 }
 
 :root {
-  --header-height: 5.5rem;
+	--header-height: 5.5rem;
 }
 
 * {
-  box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 html {
-  scroll-behavior: smooth;
+	scroll-behavior: smooth;
 }
 
 body {
-  margin: 0;
-  background: #faf9f6;
-  color: #252a33;
-  font-family: var(--font-manrope), Arial, sans-serif;
-  text-rendering: optimizeLegibility;
+	margin: 0;
+	background: #faf9f6;
+	color: #252a33;
+	font-family: var(--font-manrope), Arial, sans-serif;
+	text-rendering: optimizeLegibility;
 }
 
 ::selection {
-  background: #84796f;
-  color: white;
+	background: #84796f;
+	color: white;
 }
 
 a,
 button {
-  -webkit-tap-highlight-color: transparent;
+	-webkit-tap-highlight-color: transparent;
 }
 
 a:focus-visible,
 button:focus-visible,
 summary:focus-visible {
-  outline: 2px solid #84796f;
-  outline-offset: 4px;
+	outline: 2px solid #84796f;
+	outline-offset: 4px;
 }
 
 details > summary::-webkit-details-marker {
-  display: none;
+	display: none;
 }
 
 .text-balance {
-  text-wrap: balance;
+	text-wrap: balance;
 }
 
 .display-title {
-  font-family: var(--font-garamond), Georgia, serif;
-  font-weight: 500;
-  letter-spacing: -0.035em;
-  line-height: 0.96;
+	font-family: var(--font-garamond), Georgia, serif;
+	font-weight: 500;
+	letter-spacing: -0.035em;
+	line-height: 0.96;
 }
 
 .eyebrow {
-  font-size: 0.69rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  line-height: 1;
-  text-transform: uppercase;
+	font-size: 0.69rem;
+	font-weight: 700;
+	letter-spacing: 0.2em;
+	line-height: 1;
+	text-transform: uppercase;
 }
 
 .paper-grain {
-  background-image:
-    linear-gradient(rgba(7, 21, 47, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(7, 21, 47, 0.025) 1px, transparent 1px);
-  background-size: 34px 34px;
+	background-image: linear-gradient(rgba(7, 21, 47, 0.025) 1px, transparent 1px),
+		linear-gradient(90deg, rgba(7, 21, 47, 0.025) 1px, transparent 1px);
+	background-size: 34px 34px;
 }
 
 .fine-rule {
-  height: 1px;
-  background: linear-gradient(90deg, #84796f 0 5rem, rgba(7, 21, 47, 0.16) 5rem 100%);
+	height: 1px;
+	background: linear-gradient(
+		90deg,
+		#84796f 0 5rem,
+		rgba(7, 21, 47, 0.16) 5rem 100%
+	);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
+	html {
+		scroll-behavior: auto;
+	}
 
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+}
+
+/* Quill Editor Content Typography for Public Pages */
+.ql-editor-web {
+	padding: 0 !important;
+	min-height: auto !important;
+}
+
+.ql-editor-web p {
+	margin-bottom: 0px;
+	/* line-height: 1.85; */
+}
+
+.ql-editor-web h1 {
+	font-size: 2.25rem !important;
+	font-weight: 700 !important;
+	line-height: 1.25 !important;
+	margin-top: 2.5rem !important;
+	margin-bottom: 1rem !important;
+}
+
+.ql-editor-web h2 {
+	font-size: 1.75rem !important;
+	font-weight: 600 !important;
+	line-height: 1.3 !important;
+	margin-top: 1rem !important;
+	margin-bottom: 0.75rem !important;
+}
+
+.ql-editor-web h3 {
+	font-size: 1.35rem !important;
+	font-weight: 600 !important;
+	line-height: 1.4 !important;
+	margin-top: 1.5rem !important;
+	margin-bottom: 0.5rem !important;
+}
+
+/* Quill Font Size Dropdown Options */
+.ql-editor-web .ql-size-small {
+	font-size: 0.75em !important;
+}
+
+.ql-editor-web .ql-size-large {
+	font-size: 1.5em !important;
+	line-height: 1.4 !important;
+}
+
+.ql-editor-web .ql-size-huge {
+	font-size: 2.25em !important;
+	line-height: 1.25 !important;
+}
+
+/* Lists and Quotes */
+.ql-editor-web ul {
+	list-style-type: disc !important;
+	padding-left: 1.5rem !important;
+	margin-bottom: 1.5rem !important;
+}
+
+.ql-editor-web ol {
+	list-style-type: decimal !important;
+	padding-left: 1.5rem !important;
+	margin-bottom: 1.5rem !important;
+}
+
+.ql-editor-web blockquote {
+	border-left: 3px solid var(--color-taupe, #a3907c) !important;
+	padding-left: 1rem !important;
+	margin: 1.5rem 0 !important;
+	font-style: italic !important;
 }

@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Formik, Form } from "formik";
+import { Formik, Form, FieldArray } from "formik";
 import * as yup from "yup";
 import { Alert } from "../../shared/Alert";
 import { InputGroup } from "../../shared/InputGroup";
+import { Plus, X } from "lucide-react"; // Import some icons for the UI
 
 const siteConfigSchema = yup.object({
 	name: yup.string().required("Site name is required"),
@@ -17,6 +18,8 @@ const siteConfigSchema = yup.object({
 		.required("Social sharing description is required"),
 	ogImage: yup.string().required("Open Graph image URL is required"),
 	twitterImage: yup.string().required("Twitter image URL is required"),
+	// Validate keywords as an array of strings
+	keywords: yup.array().of(yup.string().required("Keyword cannot be empty")),
 });
 
 const initialValues = {
@@ -28,6 +31,7 @@ const initialValues = {
 	socialDescription: "",
 	ogImage: "",
 	twitterImage: "",
+	keywords: [] as string[], // Initialize keywords array
 };
 
 export function SiteConfigForm() {
@@ -48,7 +52,10 @@ export function SiteConfigForm() {
 				if (res.ok) {
 					const json = await res.json();
 					if (json.data) {
-						setData({ ...initialValues, ...json.data });
+						setData({
+							...initialValues,
+							...json.data,
+						});
 					}
 				}
 			} catch (error) {
@@ -149,7 +156,7 @@ export function SiteConfigForm() {
 					}
 				}}>
 				{({ isSubmitting, values, setFieldValue, errors, touched }) => (
-					<Form className="flex flex-col gap-10">
+					<Form className="flex flex-col gap-10 pb-20">
 						{/* --- SECTION 1: GLOBAL SETTINGS --- */}
 						<div className="rounded-xl border border-[var(--line)] bg-white p-6 shadow-sm md:p-8">
 							<h3 className="mb-6 border-b border-[var(--line)] pb-4 text-lg font-semibold text-[var(--ink)]">
@@ -163,7 +170,7 @@ export function SiteConfigForm() {
 							</div>
 						</div>
 
-						{/* --- SECTION 2: SEO METADATA --- */}
+						{/* --- SECTION 2: SEO METADATA & KEYWORDS --- */}
 						<div className="rounded-xl border border-[var(--line)] bg-white p-6 shadow-sm md:p-8">
 							<h3 className="mb-6 border-b border-[var(--line)] pb-4 text-lg font-semibold text-[var(--ink)]">
 								Search Engine Optimization
@@ -181,6 +188,44 @@ export function SiteConfigForm() {
 									as="textarea"
 									rows={2}
 								/>
+
+								{/* SEO Keywords Dynamic Array */}
+								<div>
+									<label className="mb-3 block text-sm font-medium text-[var(--ink)]">
+										SEO Keywords (Tags)
+									</label>
+									<FieldArray name="keywords">
+										{({ push, remove }) => (
+											<div className="space-y-3">
+												{values.keywords.map((keyword, index) => (
+													<div key={index} className="flex items-center gap-3">
+														<div className="flex-1">
+															<InputGroup
+																name={`keywords.${index}`}
+																label=""
+																placeholder="e.g. Nigerian law firm"
+															/>
+														</div>
+														<button
+															type="button"
+															onClick={() => remove(index)}
+															className="mt-1 flex size-10 items-center justify-center rounded-md border border-[var(--line)] bg-red-50 text-red-500 hover:bg-red-100 transition-colors"
+															title="Remove keyword">
+															<X className="size-4" />
+														</button>
+													</div>
+												))}
+												<button
+													type="button"
+													onClick={() => push("")}
+													className="flex items-center gap-2 rounded-md border border-dashed border-[var(--line)] bg-gray-50 px-4 py-2 text-sm font-medium text-[var(--ink)] transition-colors hover:bg-gray-100">
+													<Plus className="size-4" />
+													Add Keyword
+												</button>
+											</div>
+										)}
+									</FieldArray>
+								</div>
 							</div>
 						</div>
 
@@ -195,7 +240,7 @@ export function SiteConfigForm() {
 									<label className="mb-2 block text-sm font-medium text-[var(--ink)]">
 										Open Graph Image (1200x630px)
 									</label>
-									<div className="mt-2 overflow-hidden rounded-md border border-[var(--line)] bg-gray-50 aspect-[1200/630] flex items-center justify-center relative">
+									<div className="mt-2 flex aspect-[1200/630] items-center justify-center overflow-hidden rounded-md border border-[var(--line)] bg-gray-50 relative">
 										{values.ogImage ? (
 											// eslint-disable-next-line @next/next/no-img-element
 											<img
@@ -239,7 +284,7 @@ export function SiteConfigForm() {
 									<label className="mb-2 block text-sm font-medium text-[var(--ink)]">
 										Twitter Card Image (1200x630px)
 									</label>
-									<div className="mt-2 overflow-hidden rounded-md border border-[var(--line)] bg-gray-50 aspect-[1200/630] flex items-center justify-center relative">
+									<div className="mt-2 flex aspect-[1200/630] items-center justify-center overflow-hidden rounded-md border border-[var(--line)] bg-gray-50 relative">
 										{values.twitterImage ? (
 											// eslint-disable-next-line @next/next/no-img-element
 											<img
@@ -283,11 +328,11 @@ export function SiteConfigForm() {
 						</div>
 
 						{/* Submit Bar */}
-						<div className="sticky bottom-4 z-10 flex justify-end rounded-xl border border-[var(--line)] bg-white/90 p-4 shadow-lg backdrop-blur-md">
+						<div className="fixed bottom-0 left-0 right-0 z-50 w-full flex justify-end border-t border-[var(--line)] bg-white/90 p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] backdrop-blur-md">
 							<button
 								type="submit"
 								disabled={isSubmitting}
-								className="flex min-w-[150px] items-center justify-center rounded-md bg-[var(--color-navy)] px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--color-ink)] disabled:opacity-70">
+								className="cursor-pointer flex min-w-[150px] items-center justify-center rounded-md bg-[var(--color-navy)] px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--color-ink)] disabled:opacity-70">
 								{isSubmitting ? "Saving..." : "Save Configuration"}
 							</button>
 						</div>

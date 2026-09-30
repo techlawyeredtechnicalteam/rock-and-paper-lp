@@ -27,7 +27,7 @@ const adminModules = [
 	{
 		title: "Site Configuration",
 		description:
-			"Configure SEO metadata, site descriptions, and open-graph images.",
+			"Configure global SEO metadata, site descriptions, and open-graph images.",
 		href: "/admin/site-config",
 		icon: (
 			<svg
@@ -46,6 +46,58 @@ const adminModules = [
 					strokeLinejoin="round"
 					strokeWidth={1.5}
 					d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+				/>
+			</svg>
+		),
+	},
+	{
+		title: "Page SEO",
+		description:
+			"Set page-specific search titles, descriptions, and social preview images.",
+		href: "/admin/page-seo",
+		icon: (
+			<svg
+				className="h-6 w-6"
+				fill="none"
+				viewBox="0 0 24 24"
+				stroke="currentColor">
+				<path
+					strokeLinecap="round"
+					strokeLinejoin="round"
+					strokeWidth={1.5}
+					d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+				/>
+				<path
+					strokeLinecap="round"
+					strokeLinejoin="round"
+					strokeWidth={1.5}
+					d="M9 7h6m-6 4h3"
+				/>
+			</svg>
+		),
+	},
+	{
+		title: "Page Content",
+		description:
+			"Update hero text, section headings, and specific content across site pages.",
+		href: "/admin/page-content",
+		icon: (
+			<svg
+				className="h-6 w-6"
+				fill="none"
+				viewBox="0 0 24 24"
+				stroke="currentColor">
+				<path
+					strokeLinecap="round"
+					strokeLinejoin="round"
+					strokeWidth={1.5}
+					d="M4 6a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V6z"
+				/>
+				<path
+					strokeLinecap="round"
+					strokeLinejoin="round"
+					strokeWidth={1.5}
+					d="M4 10h16M10 10v10"
 				/>
 			</svg>
 		),

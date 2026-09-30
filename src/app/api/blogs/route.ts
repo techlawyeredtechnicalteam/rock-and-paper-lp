@@ -25,14 +25,48 @@ const yupErrorToDetails = (err: yup.ValidationError) => {
 };
 
 // GET: Fetch all blogs
-export async function GET() {
+export async function GET(request: NextRequest) {
 	try {
-		const blogs = await prisma.blog.findMany({
-			orderBy: { createdAt: "desc" },
-			include: { creator: { select: { fullName: true } } }, // Bring in the admin's name
-		});
-		return NextResponse.json({ ok: true, data: blogs }, { status: 200 });
+		const { searchParams } = new URL(request.url);
+
+		// 1. Parse pagination params (default to page 1, 9 items per page)
+		const page = parseInt(searchParams.get("page") || "1", 10);
+		const limit = parseInt(searchParams.get("limit") || "9", 10);
+		const skip = (page - 1) * limit;
+
+		// 2. Filter logic (e.g., only show published posts if requested)
+		const isPublic = searchParams.get("published") === "true";
+		const where = isPublic ? { published: true } : {};
+
+		// 3. Fetch data and total count concurrently for performance
+		const [blogs, totalCount] = await Promise.all([
+			prisma.blog.findMany({
+				where,
+				skip,
+				take: limit,
+				orderBy: { createdAt: "desc" },
+				include: { creator: { select: { fullName: true } } },
+			}),
+			prisma.blog.count({ where }),
+		]);
+
+		// 4. Calculate total pages for the frontend pagination UI
+		const totalPages = Math.ceil(totalCount / limit) || 1;
+
+		return NextResponse.json(
+			{
+				ok: true,
+				data: blogs,
+				meta: {
+					currentPage: page,
+					totalPages,
+					totalCount,
+				},
+			},
+			{ status: 200 }
+		);
 	} catch (error) {
+		console.error("Failed to fetch blogs:", error);
 		return NextResponse.json(
 			{ ok: false, error: "SERVER_ERROR" },
 			{ status: 500 }

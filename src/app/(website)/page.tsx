@@ -12,6 +12,7 @@ import { Person, TeamSection } from "@/components/home/team-section";
 import { EthosSection } from "@/components/home/ethos-section";
 import { Office, OfficesSection } from "@/components/home/offices-section";
 import { ContactCtaSection } from "@/components/home/contact-cta-section";
+import { PageSection } from "@/generated/prisma/client";
 
 export default async function HomePage() {
 	const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
@@ -21,15 +22,18 @@ export default async function HomePage() {
 	let practices: Practice[] = [];
 	let people: Person[] = [];
 	let offices: Office[] = [];
+	let contents: PageSection[] = [];
 
 	try {
 		// Fetch both endpoints concurrently
-		const [expRes, pracRes, peopleRes, officesRes] = await Promise.all([
-			fetch(`${baseUrl}/api/experiences`, { next: { revalidate: 3600 } }),
-			fetch(`${baseUrl}/api/practices`, { next: { revalidate: 3600 } }),
-			fetch(`${baseUrl}/api/people`, { next: { revalidate: 3600 } }),
-			fetch(`${baseUrl}/api/offices`, { next: { revalidate: 3600 } }),
-		]);
+		const [expRes, pracRes, peopleRes, officesRes, contentRes] =
+			await Promise.all([
+				fetch(`${baseUrl}/api/experiences`),
+				fetch(`${baseUrl}/api/practices`),
+				fetch(`${baseUrl}/api/people`),
+				fetch(`${baseUrl}/api/offices`),
+				fetch(`${baseUrl}/api/page-content?page=home`),
+			]);
 
 		if (expRes.ok) {
 			const json = await expRes.json();
@@ -48,13 +52,24 @@ export default async function HomePage() {
 			const json = await officesRes.json();
 			offices = json.data || [];
 		}
+		if (contentRes.ok) {
+			const json = await contentRes.json();
+			contents = json.data || [];
+		}
 	} catch (error) {
 		console.error("Failed to fetch homepage data:", error);
 	}
 
+	const content = contents.reduce((acc: any, section: any) => {
+		acc[section.sectionKey] = section;
+		return acc;
+	}, {});
+
+	// console.log(content);
+
 	return (
 		<>
-			<HeroSection />
+			<HeroSection content={content["hero"]} />
 			<FirmIntroductionSection />
 			<PracticeAreasSection practices={practices} />
 

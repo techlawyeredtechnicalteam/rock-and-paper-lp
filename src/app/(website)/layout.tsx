@@ -6,6 +6,9 @@ import { StructuredData } from "@/components/seo/structured-data";
 import { getSiteConfig } from "@/lib/seo"; // Importing our dynamic fetcher
 import "../globals.css";
 import QueryWrapper from "@/components/layout/query-wrapper";
+import { Office } from "@/components/home/offices-section";
+import { FirmDetail } from "@/generated/prisma/client";
+import "react-quill-new/dist/quill.snow.css";
 
 const garamond = EB_Garamond({
 	subsets: ["latin"],
@@ -20,7 +23,6 @@ const manrope = Manrope({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-	// Fetch dynamic config from your API
 	const config = await getSiteConfig();
 
 	return {
@@ -35,7 +37,7 @@ export async function generateMetadata(): Promise<Metadata> {
 		creator: config.name,
 		publisher: config.name,
 		category: "Legal services",
-		keywords: [
+		keywords: config.keywords || [
 			"Nigerian law firm",
 			"commercial lawyers Nigeria",
 			"energy law Nigeria",
@@ -90,9 +92,33 @@ export async function generateMetadata(): Promise<Metadata> {
 	};
 }
 
-export default function RootLayout({
+export default async function RootLayout({
 	children,
 }: Readonly<{ children: React.ReactNode }>) {
+	const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+
+	let offices: Office[] = [];
+	let firmDetail: FirmDetail | null = null;
+
+	try {
+		const [officesRes, firmDetailRes] = await Promise.all([
+			fetch(`${baseUrl}/api/offices`, { next: { revalidate: 3600 } }),
+			fetch(`${baseUrl}/api/firm-detail`, { next: { revalidate: 3600 } }),
+		]);
+
+		if (officesRes.ok) {
+			const json = await officesRes.json();
+			offices = json.data || [];
+		}
+
+		if (firmDetailRes.ok) {
+			const json = await firmDetailRes.json();
+			firmDetail = json.data || [];
+		}
+	} catch (error) {
+		console.error("Failed to fetch homepage data:", error);
+	}
+
 	return (
 		<html lang="en" className={`${garamond.variable} ${manrope.variable}`}>
 			<body>
@@ -100,7 +126,9 @@ export default function RootLayout({
 					<StructuredData />
 					<SiteHeader />
 					<main>{children}</main>
-					<SiteFooter />
+					{firmDetail && (
+						<SiteFooter offices={offices} firmDetails={firmDetail} />
+					)}
 				</QueryWrapper>
 			</body>
 		</html>
