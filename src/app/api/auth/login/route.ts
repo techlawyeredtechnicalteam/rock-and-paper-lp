@@ -34,10 +34,14 @@ export async function POST(req: Request) {
 			stripUnknown: true,
 		});
 
+		console.log(data.email, data.password);
+
 		// 3. Find user
 		const user = await prisma.user.findUnique({
 			where: { email: data.email },
 		});
+
+		console.log(user);
 
 		if (!user) {
 			throw { message: "Invalid credentials", status: 401 };
@@ -45,6 +49,7 @@ export async function POST(req: Request) {
 
 		// 4. Verify password
 		const passwordMatch = await bcrypt.compare(data.password, user.password);
+		console.log(passwordMatch);
 		if (!passwordMatch) {
 			throw { message: "Invalid credentials", status: 401 };
 		}
@@ -76,6 +81,7 @@ export async function POST(req: Request) {
 
 		return res;
 	} catch (e: any) {
+		console.log(e);
 		// Handle Yup Validation Errors
 		if (e?.name === "ValidationError") {
 			return NextResponse.json(

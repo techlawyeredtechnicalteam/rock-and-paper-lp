@@ -136,11 +136,13 @@ export function UserList() {
 								</td>
 								<td className="px-6 py-4 text-right">
 									<div className="flex justify-end gap-3">
-										<Link
-											href={`/admin/users/${user.id}`}
-											className="font-medium text-[var(--royal)] hover:underline">
-											Edit
-										</Link>
+										{user.role === "STAFF" && (
+											<Link
+												href={`/admin/users/${user.id}`}
+												className="font-medium text-[var(--royal)] hover:underline">
+												Edit
+											</Link>
+										)}
 										<button
 											onClick={() => handleDelete(user.id, user.fullName)}
 											disabled={isDeleting === user.id}
