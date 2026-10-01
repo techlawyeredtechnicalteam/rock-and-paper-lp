@@ -13,6 +13,7 @@ export const personSchema = yup.object({
 		)
 		.required("Slug is required"),
 	name: yup.string().required("Name is required"),
+	order: yup.number().integer("Order must be an integer").default(0), // Added order validation
 	expertise: yup
 		.array()
 		.of(yup.string().required("Expertise item cannot be empty"))
@@ -42,7 +43,7 @@ const yupErrorToDetails = (err: yup.ValidationError) => {
 export async function GET() {
 	try {
 		const people = await prisma.person.findMany({
-			orderBy: { name: "asc" }, // Alphabetical order for team members
+			orderBy: { order: "asc" }, // Sort by custom order
 		});
 
 		return NextResponse.json({ ok: true, data: people }, { status: 200 });
@@ -77,6 +78,7 @@ export async function POST(req: NextRequest) {
 			data: {
 				slug: data.slug,
 				name: data.name,
+				order: data.order ?? 0, // Save the order value
 				expertise: data.expertise,
 				image: data.image,
 				imagePosition: data.imagePosition || null,

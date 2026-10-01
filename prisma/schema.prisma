@@ -149,6 +149,7 @@ model Person {
   id            String   @id @default(cuid())
   slug          String   @unique
   name          String
+  order         Int      @default(0) // <-- Added for custom sorting
   expertise     String[] // Stores ["Energy", "Corporate Advisory", ...]
   image         String
   imagePosition String?  // Optional field, mapped from imagePosition?

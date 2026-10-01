@@ -8,6 +8,7 @@ type Person = {
 	id: string;
 	name: string;
 	slug: string;
+	order: number; // <-- Added order
 	expertise: string[];
 	image: string;
 };
@@ -69,6 +70,7 @@ export function PeopleList() {
 				<thead className="border-b border-[var(--line)] bg-[var(--paper)] text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">
 					<tr>
 						<th className="px-6 py-4">Name</th>
+						<th className="px-6 py-4 text-center">Order</th>
 						<th className="px-6 py-4">Slug</th>
 						<th className="hidden px-6 py-4 md:table-cell">Expertise</th>
 						<th className="px-6 py-4 text-right">Actions</th>
@@ -78,7 +80,7 @@ export function PeopleList() {
 					{people?.length === 0 ? (
 						<tr>
 							<td
-								colSpan={4}
+								colSpan={5}
 								className="px-6 py-8 text-center text-[var(--muted)]">
 								No team members found. Add one to get started.
 							</td>
@@ -90,7 +92,7 @@ export function PeopleList() {
 								className="transition-colors hover:bg-gray-50">
 								<td className="px-6 py-4 font-medium">
 									<div className="flex items-center gap-3">
-										<div className="h-8 w-8 overflow-hidden rounded-full border border-[var(--line)] bg-gray-100 shrink-0">
+										<div className="h-8 w-8 shrink-0 overflow-hidden rounded-full border border-[var(--line)] bg-gray-100">
 											{/* eslint-disable-next-line @next/next/no-img-element */}
 											<img
 												src={person.image}
@@ -101,6 +103,9 @@ export function PeopleList() {
 										{person.name}
 									</div>
 								</td>
+								<td className="px-6 py-4 text-center font-mono text-[var(--muted)]">
+									{person.order}
+								</td>
 								<td className="px-6 py-4 text-[var(--muted)]">{person.slug}</td>
 								<td className="hidden px-6 py-4 text-[var(--muted)] md:table-cell">
 									<span className="line-clamp-1">
@@ -110,7 +115,7 @@ export function PeopleList() {
 								<td className="px-6 py-4 text-right">
 									<div className="flex justify-end gap-3">
 										<Link
-											href={`/admin/people/${person.id}`}
+											href={`/admin/people/${person.slug}`}
 											className="font-medium text-[var(--royal)] hover:underline">
 											Edit
 										</Link>

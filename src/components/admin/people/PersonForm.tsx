@@ -17,6 +17,7 @@ const personSchema = yup.object({
 		)
 		.required("Slug is required"),
 	name: yup.string().required("Name is required"),
+	order: yup.number().integer("Order must be an integer").default(0), // Added order validation
 	expertise: yup
 		.array()
 		.of(yup.string().required("Expertise cannot be empty"))
@@ -37,6 +38,7 @@ const personSchema = yup.object({
 const defaultValues = {
 	slug: "",
 	name: "",
+	order: 0, // Added default order
 	expertise: [""],
 	image: "",
 	imagePosition: "50% 50%",
@@ -159,7 +161,7 @@ export function PersonForm({ personId }: { personId?: string }) {
 							<h3 className="mb-6 border-b border-[var(--line)] pb-4 text-lg font-semibold text-[var(--ink)]">
 								Core Information
 							</h3>
-							<div className="grid gap-6 md:grid-cols-2">
+							<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
 								<InputGroup
 									name="name"
 									label="Full Name"
@@ -170,7 +172,18 @@ export function PersonForm({ personId }: { personId?: string }) {
 									label="URL Slug"
 									placeholder="e.g. sulaimon-a-badmus"
 								/>
+								<InputGroup
+									name="order"
+									label="Display Order"
+									type="number"
+									placeholder="e.g. 1"
+								/>
 							</div>
+							<p className="mt-4 text-xs text-[var(--muted)]">
+								* The <strong>Display Order</strong> field controls the sequence
+								this person appears on the site. Lower numbers (e.g. 1) appear
+								first. If left as 0, it defaults to the creation order.
+							</p>
 						</div>
 
 						{/* Headshot & Positioning */}

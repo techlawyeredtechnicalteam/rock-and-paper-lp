@@ -44,6 +44,7 @@ export async function PUT(
 				image: data.image,
 				imagePosition: data.imagePosition || null,
 				bio: data.bio,
+				order: data.order,
 			},
 		});
 
@@ -126,7 +127,7 @@ export async function GET(
 	try {
 		const id = (await params).id;
 		const person = await prisma.person.findUnique({
-			where: { id },
+			where: { slug: id },
 		});
 		if (!person)
 			return NextResponse.json(
