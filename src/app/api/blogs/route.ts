@@ -75,6 +75,15 @@ export async function GET(request: NextRequest) {
 }
 
 // POST: Create a new blog (Authenticated)
+const generateSlug = (title: string) => {
+	return title
+		.toLowerCase()
+		.trim()
+		.replace(/[^\w\s-]/g, "") // Remove non-word chars (except hyphens and spaces)
+		.replace(/[\s_-]+/g, "-") // Swap spaces and underscores for hyphens
+		.replace(/^-+|-+$/g, ""); // Remove leading/trailing hyphens
+};
+
 export async function POST(req: NextRequest) {
 	try {
 		const token = req.cookies.get("admin_token")?.value;
@@ -91,10 +100,23 @@ export async function POST(req: NextRequest) {
 			stripUnknown: true,
 		});
 
+		// 1. Generate the base slug
+		let baseSlug = generateSlug(data.title);
+		let slug = baseSlug;
+
+		// 2. Ensure the slug is unique in the database
+		let counter = 1;
+		while (await prisma.blog.findUnique({ where: { slug } })) {
+			slug = `${baseSlug}-${counter}`;
+			counter++;
+		}
+
+		// 3. Save to database with the unique slug
 		const newBlog = await prisma.blog.create({
 			data: {
 				...data,
-				creatorId, // Associate the blog with the logged-in admin
+				slug, // Pass the auto-generated slug here
+				creatorId,
 			},
 		});
 

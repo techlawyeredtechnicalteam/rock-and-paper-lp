@@ -4,6 +4,7 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { StructuredData } from "@/components/seo/structured-data";
 import { getSiteConfig } from "@/lib/seo"; // Importing our dynamic fetcher
+import NextTopLoader from "nextjs-toploader";
 import "../globals.css";
 
 const garamond = EB_Garamond({
@@ -95,6 +96,10 @@ export default function RootLayout({
 	return (
 		<html lang="en" className={`${garamond.variable} ${manrope.variable}`}>
 			<body>
+				<NextTopLoader
+					color="#1d2d4e"
+					shadow="0 0 10px #1d2d4e,0 0 5px #1d2d4e"
+				/>
 				<main>{children}</main>
 			</body>
 		</html>

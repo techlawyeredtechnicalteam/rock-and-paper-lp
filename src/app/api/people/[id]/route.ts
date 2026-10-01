@@ -36,7 +36,7 @@ export async function PUT(
 		const id = (await params).id;
 
 		const updatedPerson = await prisma.person.update({
-			where: { id },
+			where: { slug: id },
 			data: {
 				slug: data.slug,
 				name: data.name,

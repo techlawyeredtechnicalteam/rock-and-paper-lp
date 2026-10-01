@@ -14,9 +14,14 @@ export type Person = {
 
 interface TeamSectionProps {
 	people: Person[];
+	content?: {
+		eyebrow?: string | null;
+		title?: string | null;
+		description?: string | null;
+	};
 }
 
-export function TeamSection({ people }: TeamSectionProps) {
+export function TeamSection({ people, content }: TeamSectionProps) {
 	if (!people || people.length === 0) {
 		return null;
 	}
@@ -25,9 +30,12 @@ export function TeamSection({ people }: TeamSectionProps) {
 		<section className="py-24 sm:py-32 lg:py-40">
 			<Container>
 				<SectionHeading
-					eyebrow="Our people"
-					title="Accessible counsel. Serious depth."
-					description="A closely involved team with experience across transactions, advisory work and disputes."
+					eyebrow={content?.eyebrow || "Our people"}
+					title={content?.title || "Accessible counsel. Serious depth."}
+					description={
+						content?.description ||
+						"A closely involved team with experience across transactions, advisory work and disputes."
+					}
 				/>
 
 				<div className="mt-20 grid gap-10 md:grid-cols-3">

@@ -5,14 +5,30 @@ import { ArticleList, type Article } from "@/components/articles/articles-list";
 import { createPageMetadata } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
+	const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+	let seo: any = {};
+
+	try {
+		const res = await fetch(`${baseUrl}/api/page-seo?page=articles`, {
+			next: { revalidate: 3600 },
+		});
+		if (res.ok) {
+			const json = await res.json();
+			seo = json.data || {};
+		}
+	} catch (error) {
+		console.error("Failed to fetch articles page SEO:", error);
+	}
+
 	return await createPageMetadata({
-		title: "Articles",
-		description: "Practical legal perspectives from Rock & Paper LP.",
+		title: seo.title || "Articles",
+		description:
+			seo.description || "Practical legal perspectives from Rock & Paper LP.",
+		ogImage: seo.ogImage || undefined,
 		path: "/articles",
 	});
 }
 
-// Ensure searchParams are properly awaited per Next.js 15+ standards
 interface ArticlesPageProps {
 	searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
@@ -22,13 +38,12 @@ export default async function ArticlesPage({
 }: ArticlesPageProps) {
 	const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
-	// Resolve the searchParams promise to get the page number
 	const resolvedParams = await searchParams;
 	const page =
 		typeof resolvedParams.page === "string"
 			? parseInt(resolvedParams.page, 10)
 			: 1;
-	const limit = 1; // Show 9 articles per page (fits a 3-column grid perfectly)
+	const limit = 1;
 
 	let articles: Article[] = [];
 	let totalPages = 1;

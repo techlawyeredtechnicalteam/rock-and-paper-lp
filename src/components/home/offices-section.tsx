@@ -11,9 +11,16 @@ export type Office = {
 
 interface OfficesSectionProps {
 	offices: Office[];
+	// Add the CMS content prop
+	content?: {
+		eyebrow?: string | null;
+		title?: string | null;
+		linkLabel?: string | null;
+		linkUrl?: string | null;
+	};
 }
 
-export function OfficesSection({ offices }: OfficesSectionProps) {
+export function OfficesSection({ offices, content }: OfficesSectionProps) {
 	if (!offices || offices.length === 0) {
 		return null;
 	}
@@ -23,9 +30,11 @@ export function OfficesSection({ offices }: OfficesSectionProps) {
 			<Container>
 				<div className="grid gap-12 lg:grid-cols-12">
 					<div className="lg:col-span-4">
-						<p className="eyebrow text-taupe">Our offices</p>
+						<p className="eyebrow text-taupe">
+							{content?.eyebrow || "Our offices"}
+						</p>
 						<h2 className="display-title mt-8 text-5xl text-ink sm:text-6xl">
-							Close to the work. Connected in perspective.
+							{content?.title || "Close to the work. Connected in perspective."}
 						</h2>
 					</div>
 					<div className="grid gap-px bg-ink/10 sm:grid-cols-2 lg:col-span-7 lg:col-start-6">
@@ -59,7 +68,9 @@ export function OfficesSection({ offices }: OfficesSectionProps) {
 					</div>
 				</div>
 				<div className="mt-10 flex justify-end">
-					<ArrowLink href="/contact">Contact the firm</ArrowLink>
+					<ArrowLink href={content?.linkUrl || "/contact"}>
+						{content?.linkLabel || "Contact the firm"}
+					</ArrowLink>
 				</div>
 			</Container>
 		</section>

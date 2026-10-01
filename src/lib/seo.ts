@@ -13,25 +13,23 @@ export const defaultSiteConfig = {
 	twitterImage: "/twitter-image",
 } as const;
 
-type PageMetadataInput = {
+export type PageMetadataInput = {
 	title: string;
 	description?: string;
 	path: string;
+	ogImage?: string | null;
 };
 
-// Fetch via API route instead of Prisma
 export async function getSiteConfig() {
 	try {
 		const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
-		// Await and extract the cookies from the incoming request
 		const cookieStore = await cookies();
 		const cookieHeader = cookieStore
 			.getAll()
 			.map((c) => `${c.name}=${c.value}`)
 			.join("; ");
 
-		// Manually attach them to the headers
 		const res = await fetch(`${baseUrl}/api/site-config`, {
 			cache: "no-store",
 			headers: {
@@ -47,7 +45,6 @@ export async function getSiteConfig() {
 		console.error("Failed to fetch site config for metadata:", error);
 	}
 
-	// Fallback to default if API fails
 	return defaultSiteConfig;
 }
 
@@ -55,12 +52,13 @@ export async function createPageMetadata({
 	title,
 	description,
 	path,
+	ogImage,
 }: PageMetadataInput): Promise<Metadata> {
-	// 1. Fetch live config from your API endpoint
 	const config = await getSiteConfig();
 
-	// 2. Use page-specific description or fall back to the global SEO description
 	const finalDescription = description || config.description;
+	const finalOgImage = ogImage || config.ogImage;
+	const finalTwitterImage = ogImage || config.twitterImage;
 
 	return {
 		title,
@@ -77,10 +75,10 @@ export async function createPageMetadata({
 			type: "website",
 			images: [
 				{
-					url: config.ogImage,
+					url: finalOgImage,
 					width: 1200,
 					height: 630,
-					alt: `${config.name} — ${config.socialDescription}`,
+					alt: title || config.name,
 				},
 			],
 		},
@@ -88,7 +86,7 @@ export async function createPageMetadata({
 			card: "summary_large_image",
 			title,
 			description: finalDescription,
-			images: [config.twitterImage],
+			images: [finalTwitterImage],
 		},
 	};
 }

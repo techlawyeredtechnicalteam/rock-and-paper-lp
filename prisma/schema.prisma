@@ -7,6 +7,7 @@ generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
 }
+
 datasource db {
   provider = "postgresql"
 }
@@ -28,6 +29,7 @@ model User {
 
 model Blog {
   id          String   @id @default(cuid())
+  slug        String   @unique // <-- Added unique slug
   title       String
   body        String   @db.Text
   

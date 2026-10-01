@@ -12,6 +12,7 @@ export type Article = {
 	authorImage?: string | null;
 	image: string;
 	createdAt: string | Date;
+	slug: string;
 };
 
 interface ArticleListProps {
@@ -59,7 +60,7 @@ export function ArticleList({
 					{articles.map((article) => (
 						<Link
 							key={article.id}
-							href={`/articles/${article.id}`}
+							href={`/articles/${article.slug}`}
 							className="group flex flex-col overflow-hidden">
 							<div className="relative aspect-[4/3] w-full overflow-hidden bg-navy">
 								{article.image ? (

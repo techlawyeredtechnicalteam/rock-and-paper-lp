@@ -11,7 +11,7 @@ export async function GET(
 	try {
 		const id = (await params).id;
 		const blog = await prisma.blog.findUnique({
-			where: { id },
+			where: { slug: id },
 		});
 
 		if (!blog)

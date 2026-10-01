@@ -18,7 +18,6 @@ export async function GET(request: Request) {
 			where: { pageSlug },
 		});
 
-		// It's okay if it returns null, our frontend utility handles fallbacks
 		return NextResponse.json({ data: seo }, { status: 200 });
 	} catch (error) {
 		console.error("Failed to fetch page SEO:", error);
@@ -31,7 +30,6 @@ export async function GET(request: Request) {
 
 export async function PUT(request: Request) {
 	try {
-		// Protect this route
 		const cookieStore = await cookies();
 		const token = cookieStore.get("admin_token");
 		if (!token) {

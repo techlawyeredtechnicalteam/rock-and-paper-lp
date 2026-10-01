@@ -17,9 +17,18 @@ export type Practice = {
 
 interface PracticeAreasSectionProps {
 	practices: Practice[];
+	// Add the CMS content prop
+	content?: {
+		eyebrow?: string | null;
+		title?: string | null;
+		description?: string | null;
+	};
 }
 
-export function PracticeAreasSection({ practices }: PracticeAreasSectionProps) {
+export function PracticeAreasSection({
+	practices,
+	content,
+}: PracticeAreasSectionProps) {
 	if (!practices || practices.length === 0) {
 		return null;
 	}
@@ -27,10 +36,14 @@ export function PracticeAreasSection({ practices }: PracticeAreasSectionProps) {
 	return (
 		<section className="bg-ink py-24 text-white sm:py-32 lg:py-40">
 			<Container>
+				{/* Dynamically render the section heading */}
 				<SectionHeading
-					eyebrow="Our expertise"
-					title="Counsel across the business lifecycle."
-					description="From market entry and financing to regulatory engagement and dispute resolution, we bring connected thinking to complex legal questions."
+					eyebrow={content?.eyebrow || "Our expertise"}
+					title={content?.title || "Counsel across the business lifecycle."}
+					description={
+						content?.description ||
+						"From market entry and financing to regulatory engagement and dispute resolution, we bring connected thinking to complex legal questions."
+					}
 					light
 				/>
 

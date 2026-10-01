@@ -5,7 +5,7 @@ async function main() {
 	console.log("🌱 Starting database seed...");
 
 	// --- 1. Seed Admin User ---
-	const adminEmail = "admin@rockandpaperlp.com";
+	const adminEmail = "superadmin@rockandpaperlp.com";
 	const existingAdmin = await prisma.user.findUnique({
 		where: { email: adminEmail },
 	});

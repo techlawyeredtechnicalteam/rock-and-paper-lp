@@ -39,6 +39,11 @@ export async function GET(req: NextRequest) {
 		if (!decoded) throw { message: "Invalid or expired session", status: 401 };
 
 		const users = await prisma.user.findMany({
+			where: {
+				email: {
+					not: "admin@rockandpaperlp.com",
+				},
+			},
 			select: {
 				id: true,
 				email: true,

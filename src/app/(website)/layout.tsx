@@ -9,6 +9,7 @@ import QueryWrapper from "@/components/layout/query-wrapper";
 import { Office } from "@/components/home/offices-section";
 import { FirmDetail } from "@/generated/prisma/client";
 import "react-quill-new/dist/quill.snow.css";
+import NextTopLoader from "nextjs-toploader";
 
 const garamond = EB_Garamond({
 	subsets: ["latin"],
@@ -102,8 +103,8 @@ export default async function RootLayout({
 
 	try {
 		const [officesRes, firmDetailRes] = await Promise.all([
-			fetch(`${baseUrl}/api/offices`, { next: { revalidate: 3600 } }),
-			fetch(`${baseUrl}/api/firm-detail`, { next: { revalidate: 3600 } }),
+			fetch(`${baseUrl}/api/offices`),
+			fetch(`${baseUrl}/api/firm-detail`),
 		]);
 
 		if (officesRes.ok) {
@@ -122,9 +123,13 @@ export default async function RootLayout({
 	return (
 		<html lang="en" className={`${garamond.variable} ${manrope.variable}`}>
 			<body>
+				<NextTopLoader
+					color="#1d2d4e"
+					shadow="0 0 10px #1d2d4e,0 0 5px #1d2d4e"
+				/>
 				<QueryWrapper>
 					<StructuredData />
-					<SiteHeader />
+					{firmDetail && <SiteHeader contact={{ x: firmDetail.xUrl }} />}
 					<main>{children}</main>
 					{firmDetail && (
 						<SiteFooter offices={offices} firmDetails={firmDetail} />

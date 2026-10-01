@@ -2,7 +2,6 @@ import Image from "next/image";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 
-// Define the shape of your data
 export type Experience = {
 	id: string;
 	title: string;
@@ -12,15 +11,19 @@ export type Experience = {
 	imageAlt: string;
 };
 
-// Accept experiences as a prop
 interface SelectedExperienceSectionProps {
 	experiences: Experience[];
+	content?: {
+		eyebrow?: string | null;
+		title?: string | null;
+		description?: string | null;
+	};
 }
 
 export function SelectedExperienceSection({
 	experiences,
+	content,
 }: SelectedExperienceSectionProps) {
-	// Hide the section completely if there's no data
 	if (!experiences || experiences.length === 0) {
 		return null;
 	}
@@ -29,9 +32,14 @@ export function SelectedExperienceSection({
 		<section className="paper-grain py-24 sm:py-32 lg:py-40">
 			<Container>
 				<SectionHeading
-					eyebrow="Selected experience"
-					title="Experience measured by what it moves forward."
-					description="Representative matters handled by members of our team before and during their time at Rock & Paper LP."
+					eyebrow={content?.eyebrow || "Selected experience"}
+					title={
+						content?.title || "Experience measured by what it moves forward."
+					}
+					description={
+						content?.description ||
+						"Representative matters handled by members of our team before and during their time at Rock & Paper LP."
+					}
 				/>
 
 				<div className="mt-20 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">

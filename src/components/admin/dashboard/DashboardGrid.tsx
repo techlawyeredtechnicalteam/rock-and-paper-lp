@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Info, X } from "lucide-react";
 
 const adminModules = [
 	{
@@ -242,6 +244,8 @@ type UserProfile = {
 };
 
 export function DashboardGrid() {
+	// const [isHelpOpen, setIsHelpOpen] = useState(false);
+
 	const { data: user, isLoading } = useQuery<UserProfile>({
 		queryKey: ["currentUser"],
 		queryFn: async () => {
@@ -271,41 +275,44 @@ export function DashboardGrid() {
 	});
 
 	return (
-		<div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-			{visibleModules.map((module) => (
-				<Link
-					key={module.title}
-					href={module.href}
-					className="group flex flex-col justify-between rounded-xl border border-[var(--line)] bg-white p-6 shadow-sm transition-all hover:border-[var(--color-navy)] hover:shadow-md">
-					<div>
-						<div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-[var(--paper)] text-[var(--color-navy)] transition-colors group-hover:bg-[var(--color-navy)] group-hover:text-white">
-							{module.icon}
+		<div className="space-y-6">
+			{/* Grid */}
+			<div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+				{visibleModules.map((module) => (
+					<Link
+						key={module.title}
+						href={module.href}
+						className="group flex flex-col justify-between rounded-xl border border-[var(--line)] bg-white p-6 shadow-sm transition-all hover:border-[var(--color-navy)] hover:shadow-md">
+						<div>
+							<div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-[var(--paper)] text-[var(--color-navy)] transition-colors group-hover:bg-[var(--color-navy)] group-hover:text-white">
+								{module.icon}
+							</div>
+							<h3 className="mb-2 text-lg font-semibold text-[var(--ink)] transition-colors group-hover:text-[var(--color-navy)]">
+								{module.title}
+							</h3>
+							<p className="text-sm leading-relaxed text-[var(--muted)]">
+								{module.description}
+							</p>
 						</div>
-						<h3 className="mb-2 text-lg font-semibold text-[var(--ink)] group-hover:text-[var(--color-navy)] transition-colors">
-							{module.title}
-						</h3>
-						<p className="text-sm text-[var(--muted)] leading-relaxed">
-							{module.description}
-						</p>
-					</div>
 
-					<div className="mt-6 flex items-center text-sm font-medium text-[var(--color-navy)] opacity-80 transition-opacity group-hover:opacity-100">
-						Manage module
-						<svg
-							className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke="currentColor">
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								strokeWidth={2}
-								d="M9 5l7 7-7 7"
-							/>
-						</svg>
-					</div>
-				</Link>
-			))}
+						<div className="mt-6 flex items-center text-sm font-medium text-[var(--color-navy)] opacity-80 transition-opacity group-hover:opacity-100">
+							Manage module
+							<svg
+								className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor">
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth={2}
+									d="M9 5l7 7-7 7"
+								/>
+							</svg>
+						</div>
+					</Link>
+				))}
+			</div>
 		</div>
 	);
 }

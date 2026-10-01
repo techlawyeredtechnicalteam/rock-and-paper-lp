@@ -164,7 +164,10 @@ export async function DELETE(
 		}
 
 		// 3. Super Admin Protection Check
-		if (targetUser.email === "admin@rockandpaperlp.com") {
+		if (
+			targetUser.email === "admin@rockandpaperlp.com" ||
+			targetUser.email === "superadmin@rockandpaperlp.com"
+		) {
 			return NextResponse.json(
 				{
 					ok: false,
