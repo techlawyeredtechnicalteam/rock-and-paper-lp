@@ -8,7 +8,7 @@ type Person = {
 	id: string;
 	name: string;
 	slug: string;
-	order: number; // <-- Added order
+	order: number;
 	expertise: string[];
 	image: string;
 };
@@ -93,7 +93,6 @@ export function PeopleList() {
 								<td className="px-6 py-4 font-medium">
 									<div className="flex items-center gap-3">
 										<div className="h-8 w-8 shrink-0 overflow-hidden rounded-full border border-[var(--line)] bg-gray-100">
-											{/* eslint-disable-next-line @next/next/no-img-element */}
 											<img
 												src={person.image}
 												alt={person.name}

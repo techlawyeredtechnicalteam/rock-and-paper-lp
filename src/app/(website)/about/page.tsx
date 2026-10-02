@@ -39,7 +39,6 @@ export default async function AboutPage() {
 	let contents: PageSection[] = [];
 
 	try {
-		// Fetch both endpoints concurrently
 		const [contentRes] = await Promise.all([
 			fetch(`${baseUrl}/api/page-content?page=about`),
 		]);

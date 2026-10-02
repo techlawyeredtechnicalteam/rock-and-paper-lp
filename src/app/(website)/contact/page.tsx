@@ -37,7 +37,6 @@ export default async function ContactPage() {
 	let firmDetail: FirmDetail | null = null;
 
 	try {
-		// Fetch both endpoints concurrently
 		const [contentRes, officesRes, firmDetailRes] = await Promise.all([
 			fetch(`${baseUrl}/api/page-content?page=people`),
 			fetch(`${baseUrl}/api/offices`),

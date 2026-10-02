@@ -38,7 +38,6 @@ export default async function ExpertisePage() {
 	let contents: PageSection[] = [];
 
 	try {
-		// Fetch both endpoints concurrently
 		const [pracRes, contentRes] = await Promise.all([
 			fetch(`${baseUrl}/api/practices`),
 			fetch(`${baseUrl}/api/page-content?page=expertise`),

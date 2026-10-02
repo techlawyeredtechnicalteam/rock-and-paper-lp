@@ -37,7 +37,6 @@ export default async function PeoplePage() {
 	let contents: PageSection[] = [];
 
 	try {
-		// Fetch both endpoints concurrently
 		const [peopleRes, contentRes] = await Promise.all([
 			fetch(`${baseUrl}/api/people`),
 			fetch(`${baseUrl}/api/page-content?page=people`),
