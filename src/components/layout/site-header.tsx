@@ -11,6 +11,7 @@ const navItems = [
 	{ href: "/expertise", label: "Expertise" },
 	{ href: "/people", label: "People" },
 	{ href: "/articles", label: "Articles" },
+	{ href: "/privacy-policy", label: "Privacy" },
 	{ href: "/contact", label: "Contact" },
 ];
 

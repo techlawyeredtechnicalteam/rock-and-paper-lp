@@ -53,17 +53,17 @@ export function SiteFooter({ offices, firmDetails }: SiteFooterProps) {
 								<address className="mt-5 text-sm not-italic leading-7 text-stone/70">
 									{Array.isArray(office.address)
 										? office.address.map((line) => (
+											<span key={line} className="block">
+												{line}
+											</span>
+										))
+										: String(office.address)
+											.split("\n")
+											.map((line) => (
 												<span key={line} className="block">
 													{line}
 												</span>
-										  ))
-										: String(office.address)
-												.split("\n")
-												.map((line) => (
-													<span key={line} className="block">
-														{line}
-													</span>
-												))}
+											))}
 								</address>
 							</div>
 						))}
@@ -91,6 +91,7 @@ export function SiteFooter({ offices, firmDetails }: SiteFooterProps) {
 							<Link href="/articles" className="text-stone/60 hover:text-white">
 								Articles
 							</Link>
+							<Link href="/privacy-policy" className="text-stone/60 hover:text-white">Privacy</Link>
 							<Link href="/contact" className="text-stone/60 hover:text-white">
 								Contact
 							</Link>

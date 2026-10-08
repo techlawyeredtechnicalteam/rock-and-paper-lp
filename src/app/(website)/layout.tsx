@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
 import { EB_Garamond, Manrope } from "next/font/google";
 import { SiteHeader } from "@/components/layout/site-header";
-import { SiteFooter } from "@/components/layout/site-footer";
+import {
+	SiteFooter,
+	type FirmDetails,
+	type Office,
+} from "@/components/layout/site-footer";
 import { StructuredData } from "@/components/seo/structured-data";
 import { getSiteConfig } from "@/lib/seo"; // Importing our dynamic fetcher
 import "../globals.css";
 import QueryWrapper from "@/components/layout/query-wrapper";
-import { Office } from "@/components/home/offices-section";
-import { FirmDetail } from "@/generated/prisma/client";
+import { contact as fallbackContact, offices as fallbackOffices } from "@/content/firm";
 import "react-quill-new/dist/quill.snow.css";
 import NextTopLoader from "nextjs-toploader";
 
@@ -98,8 +101,14 @@ export default async function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
 	const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
-	let offices: Office[] = [];
-	let firmDetail: FirmDetail | null = null;
+	let offices: Office[] = fallbackOffices.map((office) => ({
+		city: office.city,
+		address: [...office.address],
+	}));
+	let firmDetails: FirmDetails = {
+		generalEmail: fallbackContact.generalEmail,
+		xUrl: fallbackContact.x,
+	};
 
 	try {
 		const [officesRes, firmDetailRes] = await Promise.all([
@@ -114,7 +123,7 @@ export default async function RootLayout({
 
 		if (firmDetailRes.ok) {
 			const json = await firmDetailRes.json();
-			firmDetail = json.data || [];
+			firmDetails = { ...firmDetails, ...(json.data || {}) };
 		}
 	} catch (error) {
 		console.error("Failed to fetch homepage data:", error);
@@ -129,11 +138,9 @@ export default async function RootLayout({
 				/>
 				<QueryWrapper>
 					<StructuredData />
-					{firmDetail && <SiteHeader contact={{ x: firmDetail.xUrl }} />}
+					<SiteHeader contact={{ x: firmDetails.xUrl }} />
 					<main>{children}</main>
-					{firmDetail && (
-						<SiteFooter offices={offices} firmDetails={firmDetail} />
-					)}
+					<SiteFooter offices={offices} firmDetails={firmDetails} />
 				</QueryWrapper>
 			</body>
 		</html>
