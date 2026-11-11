@@ -6,19 +6,25 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 function getPrismaClient(): PrismaClient {
-	if (globalForPrisma.prisma) {
+	if (process.env.NODE_ENV !== "production" && globalForPrisma.prisma) {
 		return globalForPrisma.prisma;
 	}
 
 	const adapter = new PrismaPg({
 		connectionString: process.env.DATABASE_URL,
-		// On Cloudflare Workers, TCP sockets cannot be reused across separate requests.
-		// Setting maxUses: 1 ensures each connection is closed after use instead of staying idle across requests.
-		maxUses: process.env.NODE_ENV === "production" ? 1 : undefined,
+		// On Cloudflare Workers, TCP sockets and pg.Pool queues cannot be shared across separate requests.
+		// Using max: 1 and maxUses: 1 per client ensures each connection is isolated to the current request and closed after use.
+		...(process.env.NODE_ENV === "production"
+			? { max: 1, maxUses: 1, idleTimeoutMillis: 1 }
+			: {}),
 	});
 
 	const client = new PrismaClient({ adapter });
-	globalForPrisma.prisma = client;
+
+	if (process.env.NODE_ENV !== "production") {
+		globalForPrisma.prisma = client;
+	}
+
 	return client;
 }
 
