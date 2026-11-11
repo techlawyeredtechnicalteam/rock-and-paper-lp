@@ -3,15 +3,7 @@
 import Link from "next/link";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-
-type Blog = {
-	id: string;
-	title: string;
-	authorName: string;
-	published: boolean;
-	image: string;
-	createdAt: string;
-};
+import { Blog } from "@/generated/prisma/client";
 
 export function BlogsList() {
 	const queryClient = useQueryClient();
@@ -118,7 +110,7 @@ export function BlogsList() {
 								<td className="px-6 py-4 text-right">
 									<div className="flex justify-end gap-3">
 										<Link
-											href={`/admin/blogs/${blog.id}`}
+											href={`/admin/blogs/${blog.slug}`}
 											className="font-medium text-[var(--royal)] hover:underline">
 											Edit
 										</Link>

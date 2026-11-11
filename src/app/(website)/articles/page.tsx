@@ -43,14 +43,14 @@ export default async function ArticlesPage({
 		typeof resolvedParams.page === "string"
 			? parseInt(resolvedParams.page, 10)
 			: 1;
-	const limit = 1;
+	const limit = 10;
 
 	let articles: Article[] = [];
 	let totalPages = 1;
 
 	try {
 		const res = await fetch(
-			`${baseUrl}/api/blogs?page=${page}&limit=${limit}&published=true`
+			`${baseUrl}/api/blogs?page=${page}&limit=${limit}&published=true`,
 		);
 
 		if (res.ok) {

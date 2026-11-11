@@ -105,11 +105,21 @@ details > summary::-webkit-details-marker {
 .ql-editor-web {
 	padding: 0 !important;
 	min-height: auto !important;
+	height: auto !important;
+	overflow-y: visible !important;
+	font-family: inherit !important;
+	white-space: pre-wrap !important;
+	word-wrap: break-word !important;
+	word-break: normal !important;
+	hyphens: none !important;
 }
 
 .ql-editor-web p {
 	margin-bottom: 0px;
-	/* line-height: 1.85; */
+}
+
+.ql-editor-web p:empty {
+	min-height: 1.42em;
 }
 
 .ql-editor-web h1 {

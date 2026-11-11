@@ -10,6 +10,17 @@ import { createPageMetadata } from "@/lib/seo";
 // Import Quill styles so the rendered HTML matches your admin editor perfectly
 import "react-quill-new/dist/quill.snow.css";
 
+// Helper to normalize Quill HTML so words wrap naturally and hyphenated terms stay together
+function formatArticleHtml(html: string) {
+	if (!html) return "";
+	return html
+		.replace(/&nbsp;|\u00a0/g, " ")
+		.replace(/(>[^<]*)|(<[^>]+>)/g, (match, textNode) => {
+			if (!textNode) return match;
+			return textNode.replace(/([a-zA-Z])-([a-zA-Z])/g, "$1\u2011$2");
+		});
+}
+
 // Helper to strip HTML for SEO and calculations
 function stripHtml(html: string) {
 	if (!html) return "";
@@ -145,7 +156,7 @@ export default async function ArticlePage({
 				<Container>
 					<div className="mx-auto max-w-3xl">
 						{/* Elegant Author Byline Divider */}
-						<div className="mb-12 flex items-center gap-5 border-y border-ink/10 py-6 sm:mb-16 sm:py-8">
+						<div className="flex items-center gap-5 border-y border-ink/10 py-6 mb-5 sm:mb-10 sm:py-8">
 							{article.authorImage ? (
 								<Image
 									src={article.authorImage}
@@ -175,10 +186,12 @@ export default async function ArticlePage({
 						</div>
 
 						{/* Rich Text Editor Content */}
-						<div className="ql-snow">
+						<div className="ql-container ql-snow w-full! border-0!">
 							<div
-								className="ql-editor-web !p-0 !min-h-0 text-ink/85 sm:text-lg"
-								dangerouslySetInnerHTML={{ __html: article.body }}
+								className="ql-editor ql-editor-web text-ink/85 sm:text-lg"
+								dangerouslySetInnerHTML={{
+									__html: formatArticleHtml(article.body),
+								}}
 							/>
 						</div>
 					</div>

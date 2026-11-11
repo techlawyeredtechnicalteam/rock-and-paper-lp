@@ -6,7 +6,7 @@ import { blogSchema } from "../route";
 // GET: Fetch a single blog by ID
 export async function GET(
 	req: NextRequest,
-	{ params }: { params: Promise<{ id: string }> }
+	{ params }: { params: Promise<{ id: string }> },
 ) {
 	try {
 		const id = (await params).id;
@@ -17,13 +17,13 @@ export async function GET(
 		if (!blog)
 			return NextResponse.json(
 				{ ok: false, error: "NOT_FOUND" },
-				{ status: 404 }
+				{ status: 404 },
 			);
 		return NextResponse.json({ ok: true, data: blog }, { status: 200 });
 	} catch (error) {
 		return NextResponse.json(
 			{ ok: false, error: "SERVER_ERROR" },
-			{ status: 500 }
+			{ status: 500 },
 		);
 	}
 }
@@ -31,7 +31,7 @@ export async function GET(
 // PUT: Update a specific blog
 export async function PUT(
 	req: NextRequest,
-	{ params }: { params: Promise<{ id: string }> }
+	{ params }: { params: Promise<{ id: string }> },
 ) {
 	try {
 		const token = req.cookies.get("admin_token")?.value;
@@ -48,7 +48,7 @@ export async function PUT(
 		});
 
 		const updatedBlog = await prisma.blog.update({
-			where: { id },
+			where: { slug: id },
 			data,
 		});
 
@@ -57,11 +57,11 @@ export async function PUT(
 		if (e?.code === "P2025")
 			return NextResponse.json(
 				{ ok: false, error: "NOT_FOUND" },
-				{ status: 404 }
+				{ status: 404 },
 			);
 		return NextResponse.json(
 			{ ok: false, error: e?.message || "SERVER_ERROR" },
-			{ status: e?.status || 500 }
+			{ status: e?.status || 500 },
 		);
 	}
 }
@@ -69,7 +69,7 @@ export async function PUT(
 // DELETE: Remove a specific blog
 export async function DELETE(
 	req: NextRequest,
-	{ params }: { params: Promise<{ id: string }> }
+	{ params }: { params: Promise<{ id: string }> },
 ) {
 	try {
 		const token = req.cookies.get("admin_token")?.value;
@@ -85,17 +85,17 @@ export async function DELETE(
 
 		return NextResponse.json(
 			{ ok: true, message: "Blog deleted" },
-			{ status: 200 }
+			{ status: 200 },
 		);
 	} catch (e: any) {
 		if (e?.code === "P2025")
 			return NextResponse.json(
 				{ ok: false, error: "NOT_FOUND" },
-				{ status: 404 }
+				{ status: 404 },
 			);
 		return NextResponse.json(
 			{ ok: false, error: e?.message || "SERVER_ERROR" },
-			{ status: e?.status || 500 }
+			{ status: e?.status || 500 },
 		);
 	}
 }
