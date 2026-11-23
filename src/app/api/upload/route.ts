@@ -33,14 +33,14 @@ export async function POST(req: NextRequest) {
 		if (!decoded)
 			return NextResponse.json(
 				{ message: "Invalid or expired session" },
-				{ status: 401 }
+				{ status: 401 },
 			);
 
 		const body = await req.json();
 		if (!body.contentType)
 			return NextResponse.json(
 				{ message: "Content Type is required." },
-				{ status: 400 }
+				{ status: 400 },
 			);
 
 		const randomUUID = crypto.randomUUID().replace(/-/g, "").substring(0, 16);
@@ -62,13 +62,13 @@ export async function POST(req: NextRequest) {
 				uploadUrl: uploadUrl, // The frontend PUTs the file here
 				fileUrl: fileUrl, // The frontend sets this in Formik/state to save to DB
 			},
-			{ status: 200 }
+			{ status: 200 },
 		);
 	} catch (error: any) {
 		console.error("S3 Upload Error:", error);
 		return NextResponse.json(
 			{ message: "Internal Server Error", error: error.message },
-			{ status: 500 }
+			{ status: 500 },
 		);
 	}
 }

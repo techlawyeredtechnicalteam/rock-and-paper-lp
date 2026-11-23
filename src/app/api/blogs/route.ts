@@ -5,7 +5,8 @@ import { verifyToken } from "@/lib/auth";
 
 export const blogSchema = yup.object({
 	title: yup.string().required("Title is required"),
-	body: yup.string().required("Content body is required"),
+	body: yup.string().nullable().optional(),
+	fileUrl: yup.string().url("Must be a valid URL").nullable().optional(),
 	authorName: yup.string().required("Author name is required"),
 	authorTitle: yup.string().nullable(),
 	authorImage: yup.string().url("Must be a valid URL").nullable(),
@@ -115,6 +116,7 @@ export async function POST(req: NextRequest) {
 		const newBlog = await prisma.blog.create({
 			data: {
 				...data,
+				...(data.fileUrl ? { fileUrl: data.fileUrl } : {}),
 				slug, // Pass the auto-generated slug here
 				creatorId,
 			},

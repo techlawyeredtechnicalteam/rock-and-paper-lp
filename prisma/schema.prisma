@@ -32,7 +32,8 @@ model Blog {
   id          String   @id @default(cuid())
   slug        String   @unique // <-- Added unique slug
   title       String
-  body        String   @db.Text
+  body        String?  @db.Text
+  fileUrl     String?  // Optional downloadable PDF file URL
   
   // 1. The actual author of the post (flexible for internal or external)
   authorName  String

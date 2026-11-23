@@ -15,7 +15,8 @@ import { RichTextEditor } from "./RichTextEditor";
 
 const blogSchema = yup.object({
 	title: yup.string().required("Title is required"),
-	body: yup.string().required("Content body is required"),
+	body: yup.string().nullable().optional(),
+	fileUrl: yup.string().url("Must be a valid URL").nullable().optional(),
 	authorName: yup.string().required("Author name is required"),
 	authorTitle: yup.string().nullable(),
 	authorImage: yup.string().url("Must be a valid URL").nullable(),
@@ -29,6 +30,7 @@ const blogSchema = yup.object({
 const defaultValues = {
 	title: "",
 	body: "",
+	fileUrl: "",
 	authorName: "",
 	authorTitle: "",
 	authorImage: "",
@@ -40,13 +42,15 @@ export function BlogForm({ blogId }: { blogId?: string }) {
 	const router = useRouter();
 	const queryClient = useQueryClient();
 
-	// Track loading states for our two different image uploads
+	// Track loading states for our image and PDF uploads
 	const [isUploading, setIsUploading] = useState<{
 		cover: boolean;
 		avatar: boolean;
+		pdf: boolean;
 	}>({
 		cover: false,
 		avatar: false,
+		pdf: false,
 	});
 
 	const [alert, setAlert] = useState<{
@@ -68,11 +72,14 @@ export function BlogForm({ blogId }: { blogId?: string }) {
 	const handleImageUpload = async (
 		e: React.ChangeEvent<HTMLInputElement>,
 		fieldName: string,
-		uploadType: "cover" | "avatar",
+		uploadType: "cover" | "avatar" | "pdf",
 		setFieldValue: (field: string, value: any) => void
 	) => {
 		const file = e.target.files?.[0];
 		if (!file) return;
+
+		const contentType =
+			file.type || (uploadType === "pdf" ? "application/pdf" : "");
 
 		setIsUploading((prev) => ({ ...prev, [uploadType]: true }));
 		setAlert(null);
@@ -81,17 +88,17 @@ export function BlogForm({ blogId }: { blogId?: string }) {
 			const res = await fetch("/api/upload", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ contentType: file.type }),
+				body: JSON.stringify({ contentType }),
 			});
 			const data = await res.json();
 			if (!res.ok) throw new Error(data.message || "Failed to get upload URL");
 
 			const uploadRes = await fetch(data.uploadUrl, {
 				method: "PUT",
-				headers: { "Content-Type": file.type },
+				headers: { "Content-Type": contentType },
 				body: file,
 			});
-			if (!uploadRes.ok) throw new Error("Failed to upload image");
+			if (!uploadRes.ok) throw new Error("Failed to upload file");
 
 			setFieldValue(fieldName, data.fileUrl);
 		} catch (error: any) {
@@ -182,13 +189,65 @@ export function BlogForm({ blogId }: { blogId?: string }) {
 							</h3>
 							<div className="flex flex-col gap-6">
 								<InputGroup name="title" label="Article Title" />
-								{/* <InputGroup
-									name="body"
-									label="Article Body (Supports Markdown/HTML formatting if rendered on frontend)"
-									as="textarea"
-									rows={15}
-								/> */}
-								<RichTextEditor name="body" label="Article Content" />
+
+								{/* PDF File Upload */}
+								<div>
+									<label className="mb-2 block text-sm font-medium text-[var(--ink)]">
+										Article PDF Document (Optional)
+									</label>
+									<div className="flex flex-wrap items-center gap-4 rounded-md border border-[var(--line)] bg-gray-50 p-4">
+										<div className="flex-1 min-w-0">
+											{values.fileUrl ? (
+												<div className="flex items-center gap-3">
+													<a
+														href={values.fileUrl}
+														target="_blank"
+														rel="noopener noreferrer"
+														className="truncate text-sm font-medium text-[var(--royal)] hover:underline">
+														{values.fileUrl.split("/").pop() || "View Uploaded PDF"}
+													</a>
+													<button
+														type="button"
+														onClick={() => setFieldValue("fileUrl", "")}
+														className="shrink-0 text-xs font-medium text-red-500 hover:underline">
+														Remove
+													</button>
+												</div>
+											) : (
+												<span className="text-sm text-[var(--muted)]">
+													No PDF file uploaded
+												</span>
+											)}
+										</div>
+										<label
+											className={`cursor-pointer inline-flex items-center justify-center rounded-md bg-[var(--paper)] px-4 py-2 text-sm font-medium text-[var(--ink)] border border-[var(--line)] transition-colors hover:bg-gray-100 ${
+												isUploading.pdf
+													? "opacity-50 pointer-events-none"
+													: ""
+											}`}>
+											{isUploading.pdf
+												? "Uploading..."
+												: values.fileUrl
+												? "Replace PDF"
+												: "Upload PDF"}
+											<input
+												type="file"
+												accept="application/pdf,.pdf"
+												className="hidden"
+												onChange={(e) =>
+													handleImageUpload(e, "fileUrl", "pdf", setFieldValue)
+												}
+											/>
+										</label>
+									</div>
+									{errors.fileUrl && touched.fileUrl && (
+										<p className="mt-2 text-xs font-medium text-red-500">
+											{errors.fileUrl as string}
+										</p>
+									)}
+								</div>
+
+								<RichTextEditor name="body" label="Article Content (Optional)" />
 							</div>
 						</div>
 
