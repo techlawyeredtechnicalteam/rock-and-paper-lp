@@ -6,6 +6,9 @@ import { ArrowLeft } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { ContactCtaSection } from "@/components/home/contact-cta-section";
 import { createPageMetadata } from "@/lib/seo";
+import prisma from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 
 // Import Quill styles so the rendered HTML matches your admin editor perfectly
 import "react-quill-new/dist/quill.snow.css";
@@ -45,19 +48,12 @@ function getReadTime(html?: string | null) {
 }
 
 async function getArticle(id: string) {
-	const baseUrl =
-		process.env.CLIENT_DOMAIN ||
-		process.env.NEXT_PUBLIC_APP_URL ||
-		"http://localhost:3000";
 	try {
-		const res = await fetch(`${baseUrl}/api/blogs/${id}`, {
-			next: { revalidate: 3600 },
+		return await prisma.blog.findUnique({
+			where: { slug: id },
 		});
-		if (!res.ok) return null;
-		const json = await res.json();
-		return json.data;
 	} catch (error) {
-		console.error(error);
+		console.error("Failed to fetch article:", error);
 		return null;
 	}
 }

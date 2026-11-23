@@ -3,22 +3,18 @@ import { ContactCtaSection } from "@/components/home/contact-cta-section";
 import { PageHero } from "@/components/ui/page-hero";
 import { ArticleList, type Article } from "@/components/articles/articles-list";
 import { createPageMetadata } from "@/lib/seo";
+import prisma from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
-	const baseUrl =
-		process.env.CLIENT_DOMAIN ||
-		process.env.NEXT_PUBLIC_APP_URL ||
-		"http://localhost:3000";
 	let seo: any = {};
 
 	try {
-		const res = await fetch(`${baseUrl}/api/page-seo?page=articles`, {
-			next: { revalidate: 3600 },
+		const record = await prisma.pageSeo.findUnique({
+			where: { pageSlug: "articles" },
 		});
-		if (res.ok) {
-			const json = await res.json();
-			seo = json.data || {};
-		}
+		if (record) seo = record;
 	} catch (error) {
 		console.error("Failed to fetch articles page SEO:", error);
 	}
@@ -39,32 +35,31 @@ interface ArticlesPageProps {
 export default async function ArticlesPage({
 	searchParams,
 }: ArticlesPageProps) {
-	const baseUrl =
-		process.env.CLIENT_DOMAIN ||
-		process.env.NEXT_PUBLIC_APP_URL ||
-		"http://localhost:3000";
-
 	const resolvedParams = await searchParams;
 	const page =
 		typeof resolvedParams.page === "string"
 			? parseInt(resolvedParams.page, 10)
 			: 1;
 	const limit = 10;
+	const skip = (page - 1) * limit;
 
 	let articles: Article[] = [];
 	let totalPages = 1;
 
 	try {
-		const res = await fetch(
-			`${"https://www.rockandpaperlp.com"}/api/blogs?page=${page}&limit=${limit}&published=true`,
-			{ cache: "no-store" },
-		);
+		const where = { published: true };
+		const [blogs, totalCount] = await Promise.all([
+			prisma.blog.findMany({
+				where,
+				skip,
+				take: limit,
+				orderBy: { createdAt: "desc" },
+			}),
+			prisma.blog.count({ where }),
+		]);
 
-		if (res.ok) {
-			const json = await res.json();
-			articles = json.data || [];
-			totalPages = json.meta?.totalPages || 1;
-		}
+		articles = blogs;
+		totalPages = Math.ceil(totalCount / limit) || 1;
 	} catch (error) {
 		console.error("Failed to fetch articles:", error);
 	}
