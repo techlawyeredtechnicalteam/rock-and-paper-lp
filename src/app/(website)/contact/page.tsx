@@ -11,22 +11,18 @@ import {
 	contact as fallbackContact,
 	offices as fallbackOffices,
 } from "@/content/firm";
+import prisma from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
-	const baseUrl =
-		process.env.CLIENT_DOMAIN ||
-		process.env.NEXT_PUBLIC_APP_URL ||
-		"http://localhost:3000";
 	let seo: any = {};
 
 	try {
-		const res = await fetch(`${baseUrl}/api/page-seo?page=contact`, {
-			next: { revalidate: 3600 },
+		const record = await prisma.pageSeo.findUnique({
+			where: { pageSlug: "contact" },
 		});
-		if (res.ok) {
-			const json = await res.json();
-			seo = json.data || {};
-		}
+		if (record) seo = record;
 	} catch (error) {
 		console.error("Failed to fetch contact page SEO:", error);
 	}
@@ -41,11 +37,6 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ContactPage() {
-	const baseUrl =
-		process.env.CLIENT_DOMAIN ||
-		process.env.NEXT_PUBLIC_APP_URL ||
-		"http://localhost:3000";
-
 	let contents: PageSection[] = [];
 	let offices: Office[] = fallbackOffices.map((office) => ({
 		city: office.city,
@@ -60,28 +51,21 @@ export default async function ContactPage() {
 	};
 
 	try {
-		const [contentRes, officesRes, firmDetailRes] = await Promise.all([
-			fetch(`${baseUrl}/api/page-content?page=contact`),
-			fetch(`${baseUrl}/api/offices`),
-			fetch(`${baseUrl}/api/firm-detail`),
+		const [dbContents, dbOffices, dbFirmDetail] = await Promise.all([
+			prisma.pageSection.findMany({ where: { pageSlug: "contact" } }),
+			prisma.office.findMany({ orderBy: { createdAt: "asc" } }),
+			prisma.firmDetail.findFirst(),
 		]);
 
-		if (contentRes.ok) {
-			const json = await contentRes.json();
-			contents = json.data || [];
+		contents = dbContents;
+		if (dbOffices.length > 0) {
+			offices = dbOffices;
 		}
-
-		if (officesRes.ok) {
-			const json = await officesRes.json();
-			offices = json.data || [];
-		}
-
-		if (firmDetailRes.ok) {
-			const json = await firmDetailRes.json();
-			firmDetail = { ...firmDetail, ...(json.data || {}) };
+		if (dbFirmDetail) {
+			firmDetail = { ...firmDetail, ...dbFirmDetail };
 		}
 	} catch (error) {
-		console.error("Failed to fetch homepage data:", error);
+		console.error("Failed to fetch contact page data:", error);
 	}
 
 	const formattedContents = contents.reduce((acc: any, section: any) => {

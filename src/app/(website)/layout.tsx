@@ -14,6 +14,9 @@ import { contact as fallbackContact, offices as fallbackOffices } from "@/conten
 import "react-quill-new/dist/quill.snow.css";
 import NextTopLoader from "nextjs-toploader";
 import { FloatingWhatsApp } from "@/components/layout/floating-whatsapp";
+import prisma from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 
 const garamond = EB_Garamond({
 	subsets: ["latin"],
@@ -100,11 +103,6 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function RootLayout({
 	children,
 }: Readonly<{ children: React.ReactNode }>) {
-	const baseUrl =
-		process.env.CLIENT_DOMAIN ||
-		process.env.NEXT_PUBLIC_APP_URL ||
-		"http://localhost:3000";
-
 	let offices: Office[] = fallbackOffices.map((office) => ({
 		city: office.city,
 		address: [...office.address],
@@ -116,22 +114,20 @@ export default async function RootLayout({
 	};
 
 	try {
-		const [officesRes, firmDetailRes] = await Promise.all([
-			fetch(`${baseUrl}/api/offices`),
-			fetch(`${baseUrl}/api/firm-detail`),
+		const [dbOffices, dbFirmDetail] = await Promise.all([
+			prisma.office.findMany({ orderBy: { createdAt: "asc" } }),
+			prisma.firmDetail.findFirst(),
 		]);
 
-		if (officesRes.ok) {
-			const json = await officesRes.json();
-			offices = json.data || [];
+		if (dbOffices.length > 0) {
+			offices = dbOffices;
 		}
 
-		if (firmDetailRes.ok) {
-			const json = await firmDetailRes.json();
-			firmDetails = { ...firmDetails, ...(json.data || {}) };
+		if (dbFirmDetail) {
+			firmDetails = { ...firmDetails, ...dbFirmDetail };
 		}
 	} catch (error) {
-		console.error("Failed to fetch homepage data:", error);
+		console.error("Failed to fetch layout data:", error);
 	}
 
 	return (

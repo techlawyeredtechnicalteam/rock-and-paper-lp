@@ -6,22 +6,18 @@ import { AboutExperience } from "@/components/about/about-experience";
 import { ContactCtaSection } from "@/components/home/contact-cta-section";
 import { createPageMetadata } from "@/lib/seo";
 import { PageSection } from "@/generated/prisma/client";
+import prisma from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
-	const baseUrl =
-		process.env.CLIENT_DOMAIN ||
-		process.env.NEXT_PUBLIC_APP_URL ||
-		"http://localhost:3000";
 	let seo: any = {};
 
 	try {
-		const res = await fetch(`${baseUrl}/api/page-seo?page=about`, {
-			next: { revalidate: 3600 },
+		const record = await prisma.pageSeo.findUnique({
+			where: { pageSlug: "about" },
 		});
-		if (res.ok) {
-			const json = await res.json();
-			seo = json.data || {};
-		}
+		if (record) seo = record;
 	} catch (error) {
 		console.error("Failed to fetch about page SEO:", error);
 	}
@@ -37,24 +33,14 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AboutPage() {
-	const baseUrl =
-		process.env.CLIENT_DOMAIN ||
-		process.env.NEXT_PUBLIC_APP_URL ||
-		"http://localhost:3000";
-
 	let contents: PageSection[] = [];
 
 	try {
-		const [contentRes] = await Promise.all([
-			fetch(`${baseUrl}/api/page-content?page=about`),
-		]);
-
-		if (contentRes.ok) {
-			const json = await contentRes.json();
-			contents = json.data || [];
-		}
+		contents = await prisma.pageSection.findMany({
+			where: { pageSlug: "about" },
+		});
 	} catch (error) {
-		console.error("Failed to fetch homepage data:", error);
+		console.error("Failed to fetch about page data:", error);
 	}
 
 	const formattedContents = contents.reduce((acc: any, section: any) => {

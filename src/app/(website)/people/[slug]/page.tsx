@@ -5,19 +5,22 @@ import { PersonProfile } from "@/components/people/person-profile";
 import { ContactCtaSection } from "@/components/home/contact-cta-section";
 
 import { createPageMetadata } from "@/lib/seo";
+import prisma from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 
 async function getPerson(slug: string) {
-	const baseUrl =
-		process.env.CLIENT_DOMAIN ||
-		process.env.NEXT_PUBLIC_APP_URL ||
-		"http://localhost:3000";
 	try {
-		const res = await fetch(`${baseUrl}/api/people/${slug}`);
-		if (!res.ok) return null;
-		const json = await res.json();
-		return json.data;
+		const person = await prisma.person.findUnique({
+			where: { slug },
+		});
+		if (!person) return null;
+		return {
+			...person,
+			imagePosition: person.imagePosition ?? undefined,
+		};
 	} catch (error) {
-		console.error(error);
+		console.error("Failed to fetch person:", error);
 		return null;
 	}
 }

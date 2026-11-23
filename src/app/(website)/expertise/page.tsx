@@ -5,22 +5,18 @@ import { ContactCtaSection } from "@/components/home/contact-cta-section";
 import { createPageMetadata } from "@/lib/seo";
 import { Practice } from "@/components/home/practice-areas-section";
 import { PageSection } from "@/generated/prisma/client";
+import prisma from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
-	const baseUrl =
-		process.env.CLIENT_DOMAIN ||
-		process.env.NEXT_PUBLIC_APP_URL ||
-		"http://localhost:3000";
 	let seo: any = {};
 
 	try {
-		const res = await fetch(`${baseUrl}/api/page-seo?page=expertise`, {
-			next: { revalidate: 3600 },
+		const record = await prisma.pageSeo.findUnique({
+			where: { pageSlug: "expertise" },
 		});
-		if (res.ok) {
-			const json = await res.json();
-			seo = json.data || {};
-		}
+		if (record) seo = record;
 	} catch (error) {
 		console.error("Failed to fetch expertise page SEO:", error);
 	}
@@ -35,30 +31,19 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ExpertisePage() {
-	const baseUrl =
-		process.env.CLIENT_DOMAIN ||
-		process.env.NEXT_PUBLIC_APP_URL ||
-		"http://localhost:3000";
-
 	let practices: Practice[] = [];
 	let contents: PageSection[] = [];
 
 	try {
-		const [pracRes, contentRes] = await Promise.all([
-			fetch(`${baseUrl}/api/practices`),
-			fetch(`${baseUrl}/api/page-content?page=expertise`),
+		const [dbPractices, dbContents] = await Promise.all([
+			prisma.practice.findMany({ orderBy: { title: "asc" } }),
+			prisma.pageSection.findMany({ where: { pageSlug: "expertise" } }),
 		]);
 
-		if (pracRes.ok) {
-			const json = await pracRes.json();
-			practices = json.data || [];
-		}
-		if (contentRes.ok) {
-			const json = await contentRes.json();
-			contents = json.data || [];
-		}
+		practices = dbPractices;
+		contents = dbContents;
 	} catch (error) {
-		console.error("Failed to fetch homepage data:", error);
+		console.error("Failed to fetch expertise page data:", error);
 	}
 
 	const formattedContents = contents.reduce((acc: any, section: any) => {

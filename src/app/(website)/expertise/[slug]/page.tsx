@@ -6,19 +6,17 @@ import { ContactCtaSection } from "@/components/home/contact-cta-section";
 
 import { createPageMetadata } from "@/lib/seo";
 import { Practice } from "@/components/home/practice-areas-section";
+import prisma from "@/lib/prisma";
 
-async function getPractice(slug: string) {
-	const baseUrl =
-		process.env.CLIENT_DOMAIN ||
-		process.env.NEXT_PUBLIC_APP_URL ||
-		"http://localhost:3000";
+export const dynamic = "force-dynamic";
+
+async function getPractice(slug: string): Promise<Practice | null> {
 	try {
-		const res = await fetch(`${baseUrl}/api/practices/${slug}`);
-		if (!res.ok) return null;
-		const json = await res.json();
-		return json.data;
+		return await prisma.practice.findUnique({
+			where: { slug },
+		});
 	} catch (error) {
-		console.error(error);
+		console.error("Failed to fetch practice:", error);
 		return null;
 	}
 }
@@ -43,26 +41,7 @@ export default async function PracticePage({
 	params: Promise<{ slug: string }>;
 }) {
 	const { slug } = await params;
-	const baseUrl =
-		process.env.CLIENT_DOMAIN ||
-		process.env.NEXT_PUBLIC_APP_URL ||
-		"http://localhost:3000";
-
-	let practice: Practice | null = null;
-
-	try {
-		// Fetch both endpoints concurrently
-		const [pracRes] = await Promise.all([
-			fetch(`${baseUrl}/api/practices/${slug}`, { cache: "no-store" }),
-		]);
-
-		if (pracRes.ok) {
-			const json = await pracRes.json();
-			practice = json.data || [];
-		}
-	} catch (error) {
-		console.error("Failed to fetch homepage data:", error);
-	}
+	const practice = await getPractice(slug);
 
 	if (!practice) notFound();
 

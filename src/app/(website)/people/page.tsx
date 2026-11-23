@@ -6,22 +6,18 @@ import { createPageMetadata } from "@/lib/seo";
 import { Person } from "@/components/home/team-section";
 import { PageSection } from "@/generated/prisma/client";
 import { people as fallbackPeople } from "@/content/people";
+import prisma from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
-	const baseUrl =
-		process.env.CLIENT_DOMAIN ||
-		process.env.NEXT_PUBLIC_APP_URL ||
-		"http://localhost:3000";
 	let seo: any = {};
 
 	try {
-		const res = await fetch(`${baseUrl}/api/page-seo?page=people`, {
-			next: { revalidate: 3600 },
+		const record = await prisma.pageSeo.findUnique({
+			where: { pageSlug: "people" },
 		});
-		if (res.ok) {
-			const json = await res.json();
-			seo = json.data || {};
-		}
+		if (record) seo = record;
 	} catch (error) {
 		console.error("Failed to fetch people page SEO:", error);
 	}
@@ -35,30 +31,21 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function PeoplePage() {
-	const baseUrl =
-		process.env.CLIENT_DOMAIN ||
-		process.env.NEXT_PUBLIC_APP_URL ||
-		"http://localhost:3000";
-
 	let people: Person[] = fallbackPeople;
 	let contents: PageSection[] = [];
 
 	try {
-		const [peopleRes, contentRes] = await Promise.all([
-			fetch(`${baseUrl}/api/people`),
-			fetch(`${baseUrl}/api/page-content?page=people`),
+		const [dbPeople, dbContents] = await Promise.all([
+			prisma.person.findMany({ orderBy: { order: "asc" } }),
+			prisma.pageSection.findMany({ where: { pageSlug: "people" } }),
 		]);
 
-		if (peopleRes.ok) {
-			const json = await peopleRes.json();
-			people = json.data || [];
+		if (dbPeople.length > 0) {
+			people = dbPeople;
 		}
-		if (contentRes.ok) {
-			const json = await contentRes.json();
-			contents = json.data || [];
-		}
+		contents = dbContents;
 	} catch (error) {
-		console.error("Failed to fetch homepage data:", error);
+		console.error("Failed to fetch people page data:", error);
 	}
 
 	const formattedContents = contents.reduce((acc: any, section: any) => {

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
+import prisma from "@/lib/prisma";
 
 export const defaultSiteConfig = {
 	name: "Rock & Paper LP",
@@ -11,7 +11,8 @@ export const defaultSiteConfig = {
 	socialDescription: "Clear legal thinking for complex business decisions.",
 	ogImage: "/opengraph-image",
 	twitterImage: "/twitter-image",
-} as const;
+	keywords: undefined as string[] | undefined,
+};
 
 export type PageMetadataInput = {
 	title: string;
@@ -22,28 +23,8 @@ export type PageMetadataInput = {
 
 export async function getSiteConfig() {
 	try {
-		const baseUrl =
-			process.env.CLIENT_DOMAIN ||
-			process.env.NEXT_PUBLIC_APP_URL ||
-			"http://localhost:3000";
-
-		const cookieStore = await cookies();
-		const cookieHeader = cookieStore
-			.getAll()
-			.map((c) => `${c.name}=${c.value}`)
-			.join("; ");
-
-		const res = await fetch(`${baseUrl}/api/site-config`, {
-			cache: "no-store",
-			headers: {
-				Cookie: cookieHeader,
-			},
-		});
-
-		if (res.ok) {
-			const json = await res.json();
-			if (json.data) return json.data;
-		}
+		const config = await prisma.siteConfig.findFirst();
+		if (config) return config;
 	} catch (error) {
 		console.error("Failed to fetch site config for metadata:", error);
 	}

@@ -1,8 +1,9 @@
 import { UserForm } from "@/components/admin/users/UserForm";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { cookies } from "next/headers"; // 1. Import cookies
+import prisma from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
 export const metadata = { title: "Edit System User | Admin" };
 
 export default async function EditUserPage({
@@ -11,32 +12,17 @@ export default async function EditUserPage({
 	params: Promise<{ id: string }>;
 }) {
 	const { id } = await params;
-	const baseUrl =
-		process.env.CLIENT_DOMAIN ||
-		process.env.NEXT_PUBLIC_APP_URL ||
-		"http://localhost:3000";
 
-	// 2. Await and extract the cookies from the incoming request
-	const cookieStore = await cookies();
-	const cookieHeader = cookieStore
-		.getAll()
-		.map((c) => `${c.name}=${c.value}`)
-		.join("; ");
-
-	// 3. Manually attach them to the headers
-	const res = await fetch(`${baseUrl}/api/users/${id}`, {
-		cache: "no-store",
-		headers: {
-			Cookie: cookieHeader, // Pass the cookies here!
-		},
+	const dbUser = await prisma.user.findUnique({
+		where: { id },
+		select: { id: true, email: true, fullName: true, role: true },
 	});
 
-	if (!res.ok) {
+	if (!dbUser) {
 		notFound();
 	}
 
-	const json = await res.json();
-	const user = json.data || json;
+	const user = { ...dbUser, name: dbUser.fullName };
 
 	return (
 		<>

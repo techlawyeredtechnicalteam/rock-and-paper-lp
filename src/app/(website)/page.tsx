@@ -16,22 +16,18 @@ import { PageSection } from "@/generated/prisma/client";
 import { createPageMetadata } from "@/lib/seo";
 import { Metadata } from "next";
 import { people as fallbackPeople } from "@/content/people";
+import prisma from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
-	const baseUrl =
-		process.env.CLIENT_DOMAIN ||
-		process.env.NEXT_PUBLIC_APP_URL ||
-		"http://localhost:3000";
 	let seo: any = {};
 
 	try {
-		const res = await fetch(`${baseUrl}/api/page-seo?page=home`, {
-			next: { revalidate: 3600 },
+		const record = await prisma.pageSeo.findUnique({
+			where: { pageSlug: "home" },
 		});
-		if (res.ok) {
-			const json = await res.json();
-			seo = json.data || {};
-		}
+		if (record) seo = record;
 	} catch (error) {
 		console.error("Failed to fetch home page SEO:", error);
 	}
@@ -45,11 +41,6 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-	const baseUrl =
-		process.env.CLIENT_DOMAIN ||
-		process.env.NEXT_PUBLIC_APP_URL ||
-		"http://localhost:3000";
-
 	let experiences: Experience[] = [];
 	let practices: Practice[] = [];
 	let people: Person[] = fallbackPeople;
@@ -57,35 +48,20 @@ export default async function HomePage() {
 	let contents: PageSection[] = [];
 
 	try {
-		const [expRes, pracRes, peopleRes, officesRes, contentRes] =
+		const [dbExperiences, dbPractices, dbPeople, dbOffices, dbContents] =
 			await Promise.all([
-				fetch(`${baseUrl}/api/experiences`),
-				fetch(`${baseUrl}/api/practices`),
-				fetch(`${baseUrl}/api/people`),
-				fetch(`${baseUrl}/api/offices`),
-				fetch(`${baseUrl}/api/page-content?page=home`),
+				prisma.experience.findMany({ orderBy: { createdAt: "desc" } }),
+				prisma.practice.findMany({ orderBy: { title: "asc" } }),
+				prisma.person.findMany({ orderBy: { order: "asc" } }),
+				prisma.office.findMany({ orderBy: { createdAt: "asc" } }),
+				prisma.pageSection.findMany({ where: { pageSlug: "home" } }),
 			]);
 
-		if (expRes.ok) {
-			const json = await expRes.json();
-			experiences = json.data || [];
-		}
-		if (pracRes.ok) {
-			const json = await pracRes.json();
-			practices = json.data || [];
-		}
-		if (peopleRes.ok) {
-			const json = await peopleRes.json();
-			people = json.data || [];
-		}
-		if (officesRes.ok) {
-			const json = await officesRes.json();
-			offices = json.data || [];
-		}
-		if (contentRes.ok) {
-			const json = await contentRes.json();
-			contents = json.data || [];
-		}
+		experiences = dbExperiences;
+		practices = dbPractices;
+		if (dbPeople.length > 0) people = dbPeople;
+		offices = dbOffices;
+		contents = dbContents;
 	} catch (error) {
 		console.error("Failed to fetch homepage data:", error);
 	}

@@ -1,37 +1,17 @@
-import { cookies } from "next/headers";
 import { getSiteConfig } from "@/lib/seo";
+import prisma from "@/lib/prisma";
 
 export async function StructuredData() {
-	const baseUrl =
-		process.env.CLIENT_DOMAIN ||
-		process.env.NEXT_PUBLIC_APP_URL ||
-		"http://localhost:3000";
-
-	// Extract cookies to forward to the API (in case any endpoints are protected)
-	const cookieStore = await cookies();
-	const cookieHeader = cookieStore
-		.getAll()
-		.map((c) => `${c.name}=${c.value}`)
-		.join("; ");
-
-	const fetchOptions = {
-		cache: "no-store" as RequestCache, // Optional: change to next: { revalidate: 3600 } in production
-		headers: { Cookie: cookieHeader },
-	};
-
-	// Fetch all required data in parallel for maximum performance
-	const [siteConfig, firmRes, officesRes] = await Promise.all([
+	// Fetch all required data in parallel directly from Prisma
+	const [siteConfig, firmRecord, officesData] = await Promise.all([
 		getSiteConfig(),
-		fetch(`${baseUrl}/api/firm-detail`, fetchOptions).catch(() => null),
-		fetch(`${baseUrl}/api/offices`, fetchOptions).catch(() => null),
+		prisma.firmDetail.findFirst().catch(() => null),
+		prisma.office
+			.findMany({ orderBy: { createdAt: "asc" } })
+			.catch(() => []),
 	]);
 
-	// Parse the responses
-	const firmJson = firmRes?.ok ? await firmRes.json() : null;
-	const firmData = firmJson?.data || {};
-
-	const officesJson = officesRes?.ok ? await officesRes.json() : null;
-	const officesData = officesJson?.data || [];
+	const firmData = firmRecord || ({} as Partial<NonNullable<typeof firmRecord>>);
 
 	// Construct the schema using live DB data with fallbacks
 	const schema = {
