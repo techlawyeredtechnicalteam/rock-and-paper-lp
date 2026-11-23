@@ -1,4 +1,5 @@
 import { DashboardGrid } from "@/components/admin/dashboard/DashboardGrid";
+import { Suspense } from "react";
 
 export const metadata = {
 	title: "Dashboard | The Royal Partners Admin",
@@ -6,7 +7,7 @@ export const metadata = {
 
 export default function AdminDashboardPage() {
 	return (
-		<>
+		<Suspense>
 			<div className="mb-10">
 				<h2 className="text-2xl font-semibold text-[var(--ink)]">
 					Welcome to the Dashboard
@@ -17,6 +18,6 @@ export default function AdminDashboardPage() {
 			</div>
 
 			<DashboardGrid />
-		</>
+		</Suspense>
 	);
 }
