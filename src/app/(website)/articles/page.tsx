@@ -5,7 +5,10 @@ import { ArticleList, type Article } from "@/components/articles/articles-list";
 import { createPageMetadata } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
-	const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+	const baseUrl =
+		process.env.CLIENT_DOMAIN ||
+		process.env.NEXT_PUBLIC_APP_URL ||
+		"http://localhost:3000";
 	let seo: any = {};
 
 	try {
@@ -36,7 +39,10 @@ interface ArticlesPageProps {
 export default async function ArticlesPage({
 	searchParams,
 }: ArticlesPageProps) {
-	const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+	const baseUrl =
+		process.env.CLIENT_DOMAIN ||
+		process.env.NEXT_PUBLIC_APP_URL ||
+		"http://localhost:3000";
 
 	const resolvedParams = await searchParams;
 	const page =
@@ -51,6 +57,7 @@ export default async function ArticlesPage({
 	try {
 		const res = await fetch(
 			`${baseUrl}/api/blogs?page=${page}&limit=${limit}&published=true`,
+			{ cache: "no-store" },
 		);
 
 		if (res.ok) {

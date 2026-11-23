@@ -8,7 +8,10 @@ import { createPageMetadata } from "@/lib/seo";
 import { Practice } from "@/components/home/practice-areas-section";
 
 async function getPractice(slug: string) {
-	const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+	const baseUrl =
+		process.env.CLIENT_DOMAIN ||
+		process.env.NEXT_PUBLIC_APP_URL ||
+		"http://localhost:3000";
 	try {
 		const res = await fetch(`${baseUrl}/api/practices/${slug}`);
 		if (!res.ok) return null;
@@ -40,7 +43,10 @@ export default async function PracticePage({
 	params: Promise<{ slug: string }>;
 }) {
 	const { slug } = await params;
-	const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+	const baseUrl =
+		process.env.CLIENT_DOMAIN ||
+		process.env.NEXT_PUBLIC_APP_URL ||
+		"http://localhost:3000";
 
 	let practice: Practice | null = null;
 

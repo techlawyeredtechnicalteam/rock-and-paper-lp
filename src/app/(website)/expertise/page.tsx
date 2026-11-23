@@ -7,7 +7,10 @@ import { Practice } from "@/components/home/practice-areas-section";
 import { PageSection } from "@/generated/prisma/client";
 
 export async function generateMetadata(): Promise<Metadata> {
-	const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+	const baseUrl =
+		process.env.CLIENT_DOMAIN ||
+		process.env.NEXT_PUBLIC_APP_URL ||
+		"http://localhost:3000";
 	let seo: any = {};
 
 	try {
@@ -32,7 +35,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ExpertisePage() {
-	const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+	const baseUrl =
+		process.env.CLIENT_DOMAIN ||
+		process.env.NEXT_PUBLIC_APP_URL ||
+		"http://localhost:3000";
 
 	let practices: Practice[] = [];
 	let contents: PageSection[] = [];

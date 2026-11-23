@@ -18,7 +18,10 @@ import { Metadata } from "next";
 import { people as fallbackPeople } from "@/content/people";
 
 export async function generateMetadata(): Promise<Metadata> {
-	const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+	const baseUrl =
+		process.env.CLIENT_DOMAIN ||
+		process.env.NEXT_PUBLIC_APP_URL ||
+		"http://localhost:3000";
 	let seo: any = {};
 
 	try {
@@ -42,7 +45,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-	const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+	const baseUrl =
+		process.env.CLIENT_DOMAIN ||
+		process.env.NEXT_PUBLIC_APP_URL ||
+		"http://localhost:3000";
 
 	let experiences: Experience[] = [];
 	let practices: Practice[] = [];

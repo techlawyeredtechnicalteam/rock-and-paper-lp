@@ -22,7 +22,10 @@ export type PageMetadataInput = {
 
 export async function getSiteConfig() {
 	try {
-		const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+		const baseUrl =
+			process.env.CLIENT_DOMAIN ||
+			process.env.NEXT_PUBLIC_APP_URL ||
+			"http://localhost:3000";
 
 		const cookieStore = await cookies();
 		const cookieHeader = cookieStore

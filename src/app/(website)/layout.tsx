@@ -100,7 +100,10 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function RootLayout({
 	children,
 }: Readonly<{ children: React.ReactNode }>) {
-	const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+	const baseUrl =
+		process.env.CLIENT_DOMAIN ||
+		process.env.NEXT_PUBLIC_APP_URL ||
+		"http://localhost:3000";
 
 	let offices: Office[] = fallbackOffices.map((office) => ({
 		city: office.city,

@@ -11,7 +11,10 @@ export default async function EditUserPage({
 	params: Promise<{ id: string }>;
 }) {
 	const { id } = await params;
-	const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+	const baseUrl =
+		process.env.CLIENT_DOMAIN ||
+		process.env.NEXT_PUBLIC_APP_URL ||
+		"http://localhost:3000";
 
 	// 2. Await and extract the cookies from the incoming request
 	const cookieStore = await cookies();

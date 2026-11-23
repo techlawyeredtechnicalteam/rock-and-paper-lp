@@ -2,7 +2,10 @@ import { cookies } from "next/headers";
 import { getSiteConfig } from "@/lib/seo";
 
 export async function StructuredData() {
-	const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+	const baseUrl =
+		process.env.CLIENT_DOMAIN ||
+		process.env.NEXT_PUBLIC_APP_URL ||
+		"http://localhost:3000";
 
 	// Extract cookies to forward to the API (in case any endpoints are protected)
 	const cookieStore = await cookies();

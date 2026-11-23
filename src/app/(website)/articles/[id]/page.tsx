@@ -11,7 +11,7 @@ import { createPageMetadata } from "@/lib/seo";
 import "react-quill-new/dist/quill.snow.css";
 
 // Helper to normalize Quill HTML so words wrap naturally and hyphenated terms stay together
-function formatArticleHtml(html: string) {
+function formatArticleHtml(html?: string | null) {
 	if (!html) return "";
 	return html
 		.replace(/&nbsp;|\u00a0/g, " ")
@@ -22,7 +22,7 @@ function formatArticleHtml(html: string) {
 }
 
 // Helper to strip HTML for SEO and calculations
-function stripHtml(html: string) {
+function stripHtml(html?: string | null) {
 	if (!html) return "";
 	return html
 		.replace(/<[^>]+>/g, " ")
@@ -31,21 +31,24 @@ function stripHtml(html: string) {
 }
 
 // Helper to generate excerpt for SEO description
-function getExcerpt(html: string, length = 160) {
+function getExcerpt(html?: string | null, length = 160) {
 	const text = stripHtml(html);
 	return text.length > length ? text.substring(0, length) + "..." : text;
 }
 
 // Helper to calculate estimated read time (avg 200 words per minute)
-function getReadTime(html: string) {
+function getReadTime(html?: string | null) {
 	const text = stripHtml(html);
-	const wordCount = text.split(/\s+/).length;
-	const minutes = Math.ceil(wordCount / 200);
+	const wordCount = text ? text.split(/\s+/).length : 0;
+	const minutes = Math.max(1, Math.ceil(wordCount / 200));
 	return `${minutes} MIN READ`;
 }
 
 async function getArticle(id: string) {
-	const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+	const baseUrl =
+		process.env.CLIENT_DOMAIN ||
+		process.env.NEXT_PUBLIC_APP_URL ||
+		"http://localhost:3000";
 	try {
 		const res = await fetch(`${baseUrl}/api/blogs/${id}`, {
 			next: { revalidate: 3600 },
@@ -116,7 +119,7 @@ export default async function ArticlePage({
 							<div className="mb-8 flex items-center justify-center gap-4 text-[0.68rem] font-bold uppercase tracking-[0.2em] text-taupe">
 								<span>Insight</span>
 								<span className="h-1 w-1 rounded-full bg-ink/20" />
-								<time dateTime={article.createdAt}>
+								<time dateTime={new Date(article.createdAt).toISOString()}>
 									{new Date(article.createdAt).toLocaleDateString("en-NG", {
 										month: "long",
 										day: "numeric",
