@@ -56,7 +56,7 @@ export default async function ArticlesPage({
 
 	try {
 		const res = await fetch(
-			`${baseUrl}/api/blogs?page=${page}&limit=${limit}&published=true`,
+			`${"https://www.rockandpaperlp.com"}/api/blogs?page=${page}&limit=${limit}&published=true`,
 			{ cache: "no-store" },
 		);
 
